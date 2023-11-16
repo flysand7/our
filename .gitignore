@@ -1,0 +1,7 @@
+
+# Editor/environment-specific
+**/ols.json
+
+# Temporary files
+*.o
+/bin
