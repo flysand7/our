@@ -10,23 +10,23 @@ This package implements bindings for GLFW version 3.3.
 
 ## Status
 
-[x] All base functions have a wrapper
-[ ] Can be used with OpenGL packages
-[ ] Can be used with Vulkan packages
-[ ] Linux native functions
-[ ] Darwin native functions
-[ ] Windows native functions
+- [x] All base functions have a wrapper
+- [ ] Can be used with OpenGL packages
+- [ ] Can be used with Vulkan packages
+- [ ] Linux native functions
+- [ ] Darwin native functions
+- [ ] Windows native functions
 
 ## Supported platforms
 
-[x] `windows_amd64`
-[x] `windows_i386`
-[x] `linux_amd64`
-[ ] `linux_i386`
-[ ] `linux_arm64`
-[ ] `linux_arm32`
-[x] `darwin_arm64`
-[x] `darwin_amd64`
+- [x] `windows_amd64`
+- [x] `windows_i386`
+- [x] `linux_amd64`
+- [ ] `linux_i386`
+- [ ] `linux_arm64`
+- [ ] `linux_arm32`
+- [x] `darwin_arm64`
+- [x] `darwin_amd64`
 
 ## Notes
 
