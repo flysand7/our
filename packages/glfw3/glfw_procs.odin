@@ -72,7 +72,7 @@ foreign glfw {
     // Library initialization and termination.
     glfwInit :: proc() -> b32 ---
     glfwTerminate :: proc() ---
-    glfwInitHint :: proc(hint: Init_Hint, value: b32) ---
+    glfwInitHint :: proc(hint: Init_Hint, value: i32) ---
     glfwGetVersion :: proc(major: ^i32, minot: ^i32, revision: ^i32) ---
     glfwGetVersionString :: proc() -> cstring ---
     // Error handling.

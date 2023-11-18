@@ -5,6 +5,7 @@ import "core:os"
 import "core:log"
 import "our:glfw3"
 import "core:runtime"
+import "core:fmt"
 
 glfw_error_callback :: proc "c" (error: glfw3.Error, description: cstring) {
     context = runtime.default_context()
@@ -21,13 +22,14 @@ glfw_key_callback :: proc "c" (window: ^glfw3.Window, key: glfw3.Key, scancode: 
 }
 
 main :: proc() {
-    major, minor, _ := glfw3.get_version()
+    major, minor, patch := glfw3.get_version()
     if major < glfw3.VERSION_MAJOR {
         if minor < glfw3.VERSION_MINOR {
             log.fatalf("Version of GLFW installed in the system is too old to run this example (not really, I'm just flexing)\n")
             os.exit(1)
         }
     }
+    fmt.printf("Running GLFW binary version %v.%v.%v\n", major, minor, patch)
     glfw3.set_error_callback(glfw_error_callback)
     if !glfw3.init() {
         log.fatalf("Unable to initialize GLFW\n")
