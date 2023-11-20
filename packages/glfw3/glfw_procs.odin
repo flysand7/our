@@ -72,7 +72,7 @@ foreign glfw {
     // Library initialization and termination.
     glfwInit :: proc() -> b32 ---
     glfwTerminate :: proc() ---
-    glfwInitHint :: proc(hint: Init_Hint, value: b32) ---
+    glfwInitHint :: proc(hint: Init_Hint, value: i32) ---
     glfwGetVersion :: proc(major: ^i32, minot: ^i32, revision: ^i32) ---
     glfwGetVersionString :: proc() -> cstring ---
     // Error handling.
@@ -165,8 +165,8 @@ foreign glfw {
         size_y: i32,
         refresh_rate: i32,
     ) ---
-    glfwGetWindowAttrib :: proc(window: ^Window, attrib: Window_Hint) -> b32 ---
-    glfwSetWindowAttrib :: proc(window: ^Window, attrib: Window_Hint, value: b32) -> b32 ---
+    glfwGetWindowAttrib :: proc(window: ^Window, attrib: Window_Hint) -> i32 ---
+    glfwSetWindowAttrib :: proc(window: ^Window, attrib: Window_Hint, value: b32) -> i32 ---
     // Callbacks.
     glfwSetWindowUserPointer :: proc(
         window: ^Window,
