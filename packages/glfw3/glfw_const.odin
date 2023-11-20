@@ -748,10 +748,24 @@ Wayland_Libdecor :: enum i32 {
     Possible values for @(ref=set_input_mode) function.
 */
 Input_Mode :: enum i32 {
+    // Specifies @(ref=Cursor_Mode) for the cursor.
     Cursor               = 0x00033001,
+    // `bool`: Specifies whether to enable sticky keys. If sticky keys are enabled, it ensures that
+    // when a key is pressed @(ref=get_key) returns @(ref=Action.Press) the next time the key is
+    // pressed, even if the key had been released before the call. This is useful when you are only
+    // interested in whether keys have been pressed, but not when or in which order.
     Sticky_Keys          = 0x00033002,
+    // `bool`: Specifies whether to enable sticky mouse buttons. If sticky mouse buttons are
+    // enabled,  a mouse button press will ensure that @(ref=get_mouse_button) returns
+    // @(ref=Action.Press) even if the button was released before that. This is useful when you
+    // are only interested in whether mouse buttons have been pressed, but not when or in which
+    // order.
     Sticky_Mouse_Buttons = 0x00033003,
+    // `bool`: If enabled, the callbacks that receive modifier bits will also have their 
+    // @(ref=Mod_Bits.Caps_Lock) bit set if the event was generated with caps lock on and the
+    // @(ref=Mod_Bits.Num_Lock) bit set if the event was generated with num lock on.
     Lock_Key_Mods        = 0x00033004,
+    // `bool`: If enabled, the mouse events are generated raw (unscaled and unaccelerated).
     Raw_Mouse_Motion     = 0x00033005,
 }
 

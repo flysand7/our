@@ -1,4 +1,3 @@
-
 package glfw
 
 /*
@@ -40,7 +39,7 @@ init_hint_b32 :: proc(hint: Init_Hint, value: b32) {
 // @(hide)
 @(private)
 init_hint_angle_platform :: proc(hint: Init_Hint, value: Angle_Platform) {
-    glfwInitHint(hint, cast(u32) value)
+    glfwInitHint(hint, cast(i32) value)
 }
 
 // @(hide)
@@ -892,22 +891,129 @@ destroy_window :: proc(window: ^Window) {
     glfwDestroyWindow(window)
 }
 
+/*
+    Checks the close flag of the specified window.
+    
+    This function returns the value of the close flag of the specified window.
+    
+    @(params)
+    - window: The window to query.
+    
+    @(errors)
+    - @(ref=Error.Not_Initialized)
+    
+    @(thread_safety=safe)
+    @(since=3.0)
+*/
 window_should_close :: proc(window: ^Window) -> b32 {
     return glfwWindowShouldClose(window)
 }
 
+/*
+    Sets the close flag of the specified window.
+    
+    This function sets the value of the close flag of the specified window. This can be used to
+    override the user's attempt to close the window, or to signal that it should be closed.
+    
+    @(params)
+    - window: The window whose flag to change.
+    - should_close: The new value of the flag.
+    
+    @(errors)
+    - @(ref=Error.Not_Initialized)
+    
+    @(thread_safety=safe)
+    The access to this function is not synchronized.
+    
+    @(since=3.0)
+*/
 set_window_should_close :: proc(window: ^Window, should_close: b32) {
     glfwSetWindowShouldClose(window, should_close)
 }
 
+/*
+    Sets the title of the specified window.
+    
+    This function sets the window title, encoded as UTF-8, of the specified window.
+    
+    @(params)
+    - window: The window whose title to change.
+    - title: The UTF-8 encoded window title.
+    
+    @(remark=macos)
+    The window title will not be updated until the next time you process events.
+    
+    @(thread_safety=safe)
+    @(since=1.0)
+*/
 set_window_title :: proc(window: ^Window, title: cstring) {
     glfwSetWindowTitle(window, title)
 }
 
+/*
+    Sets the icon for the specified window.
+    
+    This function sets the icon of the specified window. If multiple candidate images, those of the
+    closest to the sizes desired by the system are selected. If no images are specified, the window
+    reverts to its default icon.
+    
+    The pixels are 32-bit little-endian, non-premultiplied RGBA, i.e. eight bits per channel with
+    the red channel first. They are arranged canonically as packed sequential rows, starting from
+    the top-left corner.
+    
+    The desired image sizes varies depending on platform and system settings. The selected images
+    will be rescaled as needed. Good sizes include 16x16, 32x32 and 48x48.
+    
+    @(params)
+    - window: The window whose icon to set.
+    - icons: The images to create the icon from. Can be `nil`.
+    
+    @(errors)
+    - @(ref=Error.Not_Initialized)
+    - @(ref=Error.Invalid_Value)
+    - @(ref=Error.Platform_Error)
+    - @(ref=Error.Feature_Unavailable) (see remarks)
+    
+    @(remark=macos)
+    Regular windows do not have icons on macOS. This function will emit
+    @(ref=Error.Feature_Unavailable). The dock icon will be the same as the application bundle's
+    icon. For more information on bundles see the [Bundle Programming Guide](https://developer.apple.com/library/mac/documentation/CoreFoundation/Conceptual/CFBundles/)
+    in the Mac Developer Library.
+    
+    @(lifetimes)
+    - The specified image data is copied before this function returns.
+    
+    @(since=3.2)
+*/
 set_window_icon :: proc(window: ^Window, icons: []Image) {
     glfwSetWindowIcon(window, cast(i32) len(icons), raw_data(icons))
 }
 
+/*
+    Retrieves the position of the content area of the specified window.
+    
+    This function retrieves the position, in screen coodinates, of the upper-left corner of the
+    content area of the specified window.
+    
+    @(params)
+    - window: The window to query.
+    
+    @(returns)
+    1. The x-coordinate of the upper-left corner of the content area.
+    2. The y-coordinate of the upper-left corner of the content area.
+    
+    @(errors)
+    - @(ref=Error.Not_Initialized)
+    - @(ref=Error.Platform_Error)
+    - @(ref=Error.Feature_Unavailable) (see remarks)
+    
+    @(remark=wayland)
+    There is no way for an application to retrieve the global position of its windows. This function
+    will emit @(ref=Error.Feature_Unavailable).
+    
+    @(thread_safety=main_thread_only)
+    @(since=3.0)
+*/
 get_window_pos :: proc(window: ^Window) -> (i32, i32) {
     pos_x: i32 = ---
     pos_y: i32 = ---
@@ -915,10 +1021,62 @@ get_window_pos :: proc(window: ^Window) -> (i32, i32) {
     return pos_x, pos_y
 }
 
+/*
+    Sets the position of the content area of the specified window.
+    
+    This function sets the position, in screen coordinates of the upper-left corner of the content
+    area of the specified windowed-mode window. If the window is a full-screen window, this function
+    does nothing.
+    
+    **Do not use this function** to move an already visible window, unless you have very good
+    reasons for doing so, as it will confuse and annoy the user.
+    
+    The window manager may put limits on what positions are allowed. GLFW cannot and should not
+    override these limits.
+    
+    @(params)
+    - window: The window to query.
+    - pos_x: The x-coordinate of the upper-left corner of the content area.
+    - pos_y: The y-coordinate of the upper-left corner of the content area.
+    
+    @(errors)
+    - @(ref=Error.Not_Initialized)
+    - @(ref=Error.Platform_Error)
+    - @(ref=Error.Feature_Unavailable) (see remarks)
+    
+    @(remark=wayland)
+    There is no way for an application to set the global position of its windows. This function will
+    emit @(ref=Error.Feature_Unavailable).
+    
+    @(thread_safety=main_thread_only)
+    @(since=1.0)
+*/
 set_window_pos :: proc(window: ^Window, pos_x: i32, pos_y: i32) {
     glfwSetWindowPos(window, pos_x, pos_y)
 }
 
+/*
+    Retrieves the size of the content area of the specified window.
+    
+    This function retrieves the size, in screen coordinates, of the content area of the specified
+    window. If you wish to retrieve the size of the framebuffer of the window in pixels, see
+    @(ref=get_framebuffer_size).
+    
+    @(params)
+    - window: The window whose size to retrieve.
+    
+    @(returns)
+    1. The width, in screen coordinates, of the content area, or `nil`.
+    2. The height, in screen coordinates, of the content area, or `nil`.
+    
+    @(errors)
+    - @(ref=Error.Not_Initialized)
+    - @(ref=Error.Platform_Error)
+    
+    @(thread_safety=main_thread_only)
+    
+    @(since=1.0)
+*/
 get_window_size :: proc(window: ^Window) -> (i32, i32) {
     size_x: i32 = ---
     size_y: i32 = ---
@@ -926,6 +1084,43 @@ get_window_size :: proc(window: ^Window) -> (i32, i32) {
     return size_x, size_y
 }
 
+/*
+    Sets the size limits of the specified window.
+    
+    This function sets the size limits of the content area of the specified window. If the window
+    is full screen, the size limits only take effect once it is made windowed. If the window is not
+    resizeable, this function does nothing.
+    
+    The size limits are applied immediately to a windowed mode window and may cause it to be
+    resized.
+    
+    The maximum dimensions must be greater than or equal to the minimum dimensions and all must be
+    greater than or equal to zero.
+    
+    @(params)
+    - window: The window to set the limits for.
+    - min_size_x: The minimum width, in screen coordinates, of the content area or @(ref=DONT_CARE).
+    - min_size_y: The minimum height, in screen coordinates, of the content area or
+        @(ref=DONT_CARE).
+    - max_size_x: The maximum width, in screen coordinates, of the content area or @(ref=DONT_CARE).
+    - max_size_y: The maximum height, in screen coordinates, of the content area or
+        @(ref=DONT_CARE).
+    
+    @(errors)
+    - @(ref=Error.Not_Initialized)
+    - @(ref=Error.Invalid_Value)
+    - @(ref=Error.Platform_Error)
+    
+    @(remark)
+    If you se the size limits and aspect ratio that conflicts, the results are unspecified.
+    
+    @(remark=wayland)
+    The size limits will not be applied until the window si actually resized, either by the user or
+    the compositor.
+    
+    @(thread_safety=main_thread_only)
+    @(since=3.2)
+*/
 set_window_size_limits :: proc(
     window: ^Window,
     min_size_x: i32 = DONT_CARE,
@@ -936,14 +1131,100 @@ set_window_size_limits :: proc(
     glfwSetWindowSizeLimits(window, min_size_x, min_size_y, max_size_x, max_size_y)
 }
 
+/*
+    Sets the aspect ratio of the specified window.
+    
+    This function sets the required aspect ratio of the content area of the specified window. If
+    the window is full-screen, the aspect ratio only takes effect once it is made windowed. If the
+    window is not resizable, this option does nothing.
+    
+    The aspect ratio is specified as a numerator and a denominator and both values must be greater
+    than zero. For example, the common 16:9 aspect ratio is specified as 166 and 9, respectively.
+    
+    If the numerator and denominator are set to @(ref=DONT_CARE), then the aspect ratio limit is
+    disabled.
+    
+    The aspect ratio is applied immediately to a windowed-mode window and may cause it to be
+    resized.
+    
+    @(params)
+    - window: The window to set the limits for.
+    - numerator: The numerator of the desired aspect ratio, or @(ref=DONT_CARE)
+    - denominator: The denominator of the desired aspect ratio, or @(ref=DONT_CARE)
+    
+    @(errors)
+    - @(ref=Error.Not_Initialized)
+    - @(ref=Error.Invalid_Value)
+    - @(ref=Error.Platform_Error)
+    
+    @(remark)
+    If you set size limits and an aspect ratio that conflict, the results are unspecified.
+    
+    @(remark=wayland)
+    The aspect ratio will not be applied until the window is actually resized, either by the user or
+    by the compositor.
+    
+    @(thread_safety=main_thread_only)
+    @(since=3.2)
+*/
 set_window_aspect_ratio :: proc(window: ^Window, numerator: i32, denominator: i32) {
     glfwSetWindowAspectRatio(window, numerator, denominator)
 }
 
+/*
+    Sets the size of the content area of the specified window.
+    
+    This function sets the size, in screen coordinates, of the content area of the specified window.
+    
+    For full-screen windows, this function updates the resolution of its desired video mode and
+    switches to the video mode closest to it, without affecting the window's context. As the
+    context is unaffected, the bit depths of the framebuffer remain unchanged.
+    
+    If you wish to update the refresh rate of the desired video mode, in addition to its resolution
+    see @(ref=get_framebuffer_size).
+    
+    The window manager may put limits on what sizes are allowed. GLFW can not and should not
+    override any of these limits.
+    
+    @(params)
+    - window: The window to resize.
+    - size_x: The desired width, in screen coordinates, of the window content area.
+    - size_y: The desired height, in screen coordinates, of the window content area.
+    
+    @(errors)
+    - @(ref=Error.Not_Initialized)
+    - @(ref=Error.Platform_Error)
+    
+    @(remark=wayland)
+    A full-screen window iwll not attempt to change the mode, no matter the requested size.
+    
+    @(thread_safety=main_thread_only)
+    @(since=1.0)
+*/
 set_window_size :: proc(window: ^Window, size_x: i32, size_y: i32) {
     glfwSetWindowSize(window, size_x, size_y)
 }
 
+/*
+    Retrieves the size of the framebuffer of the specified window.
+    
+    This function retrieves the size, in pixels, of the framebuffer of the specified window. If you
+    wish to retrieve the size of the window in screen coordinates, see @(ref=get_window_size).
+    
+    @(params)
+    - window: The window whose framebuffer to query.
+    
+    @(returns)
+    1. The width, in pixels, of the framebuffer.
+    2. The height, in pixels, of the framebuffer.
+    
+    @(errors)
+    - @(ref=Error.Not_Initialized)
+    - @(ref=Error.Platform_Error)
+    
+    @(thread_safety=main_thread_only)
+    @(since=3.0)
+*/
 get_framebuffer_size :: proc(window: ^Window) -> (i32, i32) {
     size_x: i32 = ---
     size_y: i32 = ---
@@ -951,6 +1232,32 @@ get_framebuffer_size :: proc(window: ^Window) -> (i32, i32) {
     return size_x, size_y
 }
 
+/*
+    Retrieves the size of the frame of the window.
+    
+    This function retrieves the size, in screen coordinates of each edge of the frame of the
+    specified window. The size includes the title bar, if the window has one. The size of the frame
+    may vary depending on @(ref=Window_Hint) hints used to create the window.
+    
+    Because this function retrieves the size of each window frame edge and not the offset along a
+    particular coordinate axis, the retrieved values will always be non-negative.
+    
+    @(params)
+    - window: The window whose frame size to query.
+    
+    @(returns)
+    1. The size, in screen coordinates, of the left edge of the window frame
+    2. The size, in screen coordinates, of the top edge of the window frame
+    3. The size, in screen coordinates, of the right edge of the window frame
+    4. The size, in screen coordinates, of the bottom edge of the window frame
+    
+    @(errors)
+    - @(ref=Error.Not_Initialized)
+    - @(ref=Platform_Error)
+    
+    @(thread_safety=main_thread_only)
+    @(since=3.1)
+*/
 get_window_frame_size :: proc(window: ^Window) -> (i32, i32, i32, i32) {
     left:   i32 = ---
     top:    i32 = ---
@@ -960,6 +1267,33 @@ get_window_frame_size :: proc(window: ^Window) -> (i32, i32, i32, i32) {
     return left, top, right, bottom
 }
 
+/*
+    Retrieves the content scale for the specified window.
+    
+    This function retrieves the content scale for the specified window. The content scale is the
+    ratio between the currnet DPI and the platform's default DPI. This is especially important for
+    text and any UI elements. If the pixel dimensions of your UI scaled by this look appropriate on
+    your machine then it should appear at a reasonable size on other machines regardless of their
+    DPI and scaling settings. This relies on the system DPI and scaling settings being somewhat
+    correct.
+    
+    On the platforms where each monitor can have its own content scale the window content scale
+    will depend on which monitor the system considers the window to be on.
+    
+    @(params)
+    - window: The window to query.
+    
+    @(returns)
+    1. The x-axis content scale.
+    2. The y-axis content scale.
+    
+    @(errors)
+    - @(ref=Error.Not_Initialized)
+    - @(ref=Error.Platform_Error)
+    
+    @(thread_safety=main_thread_only)
+    @(since=3.0)
+*/
 get_window_content_scale :: proc(window: ^Window) -> (f32, f32) {
     scale_x: f32 = ---
     scale_y: f32 = ---
@@ -967,42 +1301,313 @@ get_window_content_scale :: proc(window: ^Window) -> (f32, f32) {
     return scale_x, scale_y
 }
 
+/*
+    Returns the opacity of the whole window.
+    
+    This function returns the opacity of the window, including any decorations.
+    
+    The opacity (or alpha) value is a positive finite number between zero and one, where zero means
+    fully-transparent and one means fully-opaque. If the system doesn't support whole window
+    transparency, this function always returns one.
+    
+    The initial opacity value for newly-created windows is one.
+    
+    @(params)
+    - window: The window to query.
+    
+    @(returns)
+    - The opacity value of the specified window.
+    
+    @(errors)
+    - @(ref=Error.Not_Initialized)
+    - @(ref=Error.Platform_Error)
+    
+    @(thread_safety=main_thread_only)
+    @(since=3.3)
+*/
 get_window_opacity :: proc(window: ^Window) -> f32 {
     return glfwGetWindowOpacity(window)
 }
 
+/*
+    Sets the opacity of the whole window.
+    
+    This function sets the opacity of the window, including any decorations.
+    
+    The opacity (or alpha) value is a positive finite number between zero and one, where zero means
+    fully-transparent and one means fully-opaque.
+    
+    The initial opacity for newly-created windows is one.
+    
+    A window created with framebuffer transparency may not use whole window transparency. The
+    results of doing so are unspecified.
+    
+    @(params)
+    - window: The window to set the opacity for.
+    - opacity: The desired opacity of the specified window.
+    
+    @(errors)
+    - @(ref=Error.Not_Initialized)
+    - @(ref=Error.Platform_Error)
+    - @(ref=Error.Feature_Unavailable) (see remarks)
+    
+    @(remark=wayland)
+    There is no way to set an opacity factor for a window. This function will emit a
+    @(ref=Error.Feature_Unavailable).
+    
+    @(thread_safety=main_thread_only)
+    @(since=3.3)
+*/
 set_window_opacity :: proc(window: ^Window, opacity: f32) {
     glfwSetWindowOpacity(window, opacity)
 }
 
+/*
+    Iconifies (minimizes) the specified window.
+    
+    This function iconifies the specified window if it was previously restored. If the window is
+    already iconified, this function does nothing.
+    
+    if the specified window is a full-screen window, GLFW restores the original video mode of the
+    monitor. The window's desired video mode is set again when the window is restored.
+    
+    @(params)
+    - window: The window to modify
+    
+    @(errors)
+    - @(ref=Error.Not_Initialized)
+    - @(ref=Error.Platform_Error)
+    
+    @(remark=wayland)
+    Once a window is iconified, @(ref=restore_window) won't be able to restore it. This is a design
+    decision of the xdg-shell protocol.
+    
+    @(thread_safety=main_thread_only)
+    @(since=2.1)
+*/
 iconify_window :: proc(window: ^Window) {
     glfwIconifyWindow(window)
 }
 
+/*
+    Restores the specified window.
+    
+    This function restores the specified window, if it was previously iconified (minimized) or
+    maximized. If the window is already restored, this function does nothing.
+    
+    If the specified window is an iconified full-screen window, its desired video mode is set again
+    for its monitor when the window is restored.
+    
+    @(params)
+    - window: The window to restore
+    
+    @(errors)
+    - @(ref=Error.Not_Initialized)
+    - @(ref=Error.Platform_Error)
+    
+    @(thread_safety=main_thread_only)
+    @(since=2.1)
+*/
 restore_window :: proc(window: ^Window) {
     glfwRestoreWindow(window)
 }
 
+/*
+    Maximizes the specified window.
+    
+    This function maximizes the specified window, if it was previously not maximized. If the window
+    is already maximized, this function does nothing.
+    
+    If the specified window is a full-screen window, this function does nothing.
+    
+    @(params)
+    - window: The window to maximize.
+    
+    @(errors)
+    - @(ref=Error.Not_Initialized)
+    - @(ref=Error.Platform_Error)
+    
+    @(thread_safety=main_thread_only)
+    @(since=3.2)
+*/
 maximize_window :: proc(window: ^Window) {
     glfwMaximizeWindow(window)
 }
 
+/*
+    Makes the specified window visible.
+    
+    This function makes the specified window visible, if it was previously hiddne. If the window is
+    already visible, or is in full-screen mode, this function does nothing.
+    
+    By default, windowed-mode windows are focused when shown. Set @(ref=Window_Hint.Focus_On_Show)
+    window hint to change this behavior for all newly-created windows, or change the behavior for
+    an existing window with @(ref=set_window_attrib).
+    
+    @(params)
+    - window: The window to make visible.
+    
+    @(errors)
+    - @(ref=Error.Not_Initialized)
+    - @(ref=Error.Platform_Error)
+    
+    @(remark=wayland)
+    Because wayland wants every frame of the desktop to be complete, this function does not
+    immediately, this function does not immediately make the window visible. Instead it will become
+    visible the next time the window's framebuffer is updated after this call.
+    
+    @(thread_safety=main_thread_only)
+    @(since=3.0)
+*/
 show_window :: proc(window: ^Window) {
     glfwShowWindow(window)
 }
 
+/*
+    Hides the specified window.
+    
+    This function hides the specified window, if it was previously visible. If the window is
+    already hidden or is in a full-screen mode, this function does nothing.
+    
+    @(params)
+    - window: The window to hide.
+    
+    @(errors)
+    - @(ref=Error.Not_Initialized)
+    - @(ref=Error.Platform_Error)
+    
+    (since=3.0)
+*/
 hide_window :: proc(window: ^Window) {
     glfwHideWindow(window)
 }
 
+/*
+    Brings the specified window to front and sets the input focus.
+    
+    This function brings the specified window to front and sets the input focus. The window should
+    already be visible and not iconified.
+    
+    By default, both windowed and full-screen windows are focused when initially created. Set the
+    @(ref=Window_Hint.Focused) window hint to disable this behavior.
+    
+    Also by default, windowed mode windows are focused when shown when @(ref=show_window). Set the
+    @(ref=Window_Hint.Focus_On_Show) hint to disable this behaviour.
+    
+    **Do not use this function** to steal focus from other applications, unless you are certain
+    that's wants. Focus stealing can be extremely disruptive.
+    
+    @(params)
+    - window: The window to give input focus.
+    
+    @(errors)
+    - @(ref=Error.Not_Initialized)
+    - @(ref=Error.Platform_Error)
+    - @(ref=Error.Feature_Unavailable) (see remark)
+    
+    @(remark=wayland)
+    It is not possible for an application to set the input focus. This function will emit
+    @(ref=Error.Feature_Unavailable).
+    
+    @(thread_safety=main_thread_only)
+    @(since=3.2)
+*/
 focus_window :: proc(window: ^Window) {
     glfwFocusWindow(window)
 }
 
+/*
+    Requests user attention to the specified window.
+    
+    This function requests user attention to the specified window. On platforms where this is not
+    supported, attention is requested to the application as a whole. Once the user has given
+    attention, usually by focusing the window or application, the system will end the request
+    automatically.
+    
+    @(params)
+    - window: The window to request attention to.
+    
+    @(errors)
+    - @(ref=Error.Not_Initialized)
+    - @(ref=Platform_Error)
+    
+    @(remark=macos)
+    Attention is requested to the application as a whole, not a specified window.
+    
+    @(thread_safety=main_thread_only)
+    @(since=3.3)
+*/
+request_window_attention :: proc(window: ^Window) {
+    glfwRequestWindowAttention(window)
+}
+
+/*
+    Returns the monitor that the window uses for full-screen mode.
+    
+    This function returns the handle of the monitor that the specified window is in full-screen on.
+    
+    @(params)
+    - window: The window to query.
+    
+    @(returns)
+    - The monitor, or `nil` if the window is in windowed mode or an error occured.
+    
+    @(thread_safety=main_thread_only)
+    @(since=3.0)
+*/
 window_monitor :: proc(window: ^Window) -> ^Monitor {
     return glfwWindowMonitor(window)
 }
 
+/*
+    Sets the mode, monitor, video mode and placement of a window.
+    
+    This function sets the monitor that the window uses for full-screen mode or, if the monitor is
+    `nil`, makes it windowed.
+    
+    When setting a monitor, this function updates the width, height and refresh rate of the desired
+    video mode and switches to the video mode most closely matching the specified mode. The window
+    position is ignored when setting a monitor.
+    
+    When the monitor is `nil`, the position, width and height are used to place the window's content
+    area. The refresh rate is ignored when no monitor is specified.
+    
+    If you only wish to update the resolution of a full-screen window or the size of a
+    windowed-mode window, see @(ref=set_window_size).
+    
+    When a window transitions from full-screen to windowed mode, this function restores any previous
+    window settings such as whether it is decorated, floating, resizable, has size or aspect ratio
+    limits etc.
+    
+    @(params)
+    - window: The window whose monitor, size or video mode to set.
+    - monitor: The desired monitor, or `nil` to set windowed mode.
+    - pos_x: The desired x-coordinate of the upper-left corner of the content area.
+    - pos_y: The desired y-coordinate of the upper-left corner of the content area.
+    - size_x: The desired width, in screen coordinates, of the content area.
+    - size_y: The desired height, in screen coordinates, of the content area.
+    - refresh_rate: The desired refresh rate, in hertz, of the video mode or @(ref=DONT_CARE).
+    
+    @(errors)
+    - @(ref=Error.Not_Initialized)
+    - @(ref=Error.Platform_Error)
+    
+    @(remark)
+    The OpenGL or OpenGL ES context will not be destroyed or otherwise affected by any resizing or
+    mode switching, although you may need to update your viewport if the framebuffer size has
+    changed.
+    
+    @(remark=wayland)
+    The desired window position is ignored, as there is no way for an application to set this
+    property.
+    
+    @(remark=wayland)
+    Setting the window to full-screen will not attempt to change this mode, no matter the requested
+    size or refresh rate.
+    
+    @(thread_safety=main_thread_only)
+    @(since=3.2)
+*/
 set_window_monitor :: proc(
     window: ^Window,
     monitor: ^Monitor,
@@ -1015,82 +1620,556 @@ set_window_monitor :: proc(
     glfwSetWindowMonitor(window, monitor, pos_x, pos_y, size_x, size_y, refresh_rate)
 }
 
-get_window_attrib :: proc(window: ^Window, attrib: Window_Hint) -> b32 {
+/*
+    Returns an attribute of the specified window.
+    
+    This function returns the value of an attribute of the specified window, or its OpenGL or
+    OpenGL ES context.
+    
+    This function obtains only the values of the boolean attributes. In order to obtain an integer
+    attribute, use @(ref=get_window_attrib_i32) function. In order to see which attributes are
+    integers and which are types, see @(ref=Window_Hint).
+    
+    @(params)
+    - window: The window to query.
+    - attrib: The @(ref=Window_Hint) whose value to return.
+    
+    @(returns)
+    - The value of the attribute as a boolean.
+    
+    @(errors)
+    - @(ref=Error.Not_Initialized)
+    - @(ref=Error.Invalid_Enum)
+    - @(ref=Error.Platform_Error)
+    
+    @(remark)
+    Framebuffer-related hints are not window attributes.
+    
+    @(remark)
+    Zero is a valid value for many window and context-related attributes, so you can not use a
+    return of zero as an indication of errors. However this function should not fail as long as it
+    is passed valid arguments and the library has been initialized/
+    
+    @(remark=wayland)
+    The wayland protocol provides no way to check whether window is iconified (minimized), so
+    @(ref=Window_Hint.Iconified) always returns `false`.
+    
+    @(include=get_window_attrib_b32)
+    
+    @(thread_safety=main_thread_only)
+    @(since=3.0)
+*/
+get_window_attrib :: get_window_attrib_b32
+
+// @(hide)
+get_window_attrib_i32 :: proc(window: ^Window, attrib: Window_Hint) -> i32 {
     return glfwGetWindowAttrib(window, attrib)
 }
 
-set_window_attrib :: proc(window: ^Window, attrib: Window_Hint, value: b32) {
-    glfwSetWindowAttrib(window, attrib, value)
+// @(hide)
+get_window_attrib_b32 :: proc(window: ^Window, attrib: Window_Hint) -> b32 {
+    return cast(b32) glfwGetWindowAttrib(window, attrib)
 }
 
-// Callbacks.
+/*
+    Sets an attribute of the specified window.
+    
+    This function sets the value of an attribute of the specified window.
+    
+    The supported attributes are:
+    - @(ref=Window_Hint.Decorated)
+    - @(ref=Window_Hint.Resizable)
+    - @(ref=Window_Hint.Floating)
+    - @(ref=Window_Hint.Auto_Iconify)
+    - @(ref=Window_Hint.Focus_On_Show)
+    - @(ref=Window_Hint.Mouse_Passthrough)
+    
+    Some of these attributes are ignored for full-screen windows. The new value will take effect if
+    the window is later made windowed.
+    
+    Some of these attributes for windowed-mode windows. The new values will take effect if the
+    window is later made full-screen.
+    
+    @(params)
+    - window: The window to set the attribute for.
+    - attrib: A supported window attribute.
+    - value: The value of the attribute.
+    
+    @(errors)
+    - @(ref=Error.Not_Initialized)
+    - @(ref=Error.Invalid_Enum)
+    - @(ref=Error.Invalid_Value)
+    - @(ref=Platform_Error)
+    - @(ref=Feature_Unavailable)
+    
+    @(remark)
+    Calling @(ref=get_window_attrib) will always return the latest value, even if that value is
+    ignored by the current mode of the window.
+    
+    @(thread_safety=main_thread_only)
+    @(since=3.3)
+*/
+set_window_attrib :: proc(window: ^Window, attrib: Window_Hint, value: b32) {
+    glfwSetWindowAttrib(window, attrib, cast(b32) value)
+}
 
+/*
+    Sets the user pointer of the specified window.
+    
+    This function sets the user-defined pointer of the specified window. The current value is
+    retained until the window is destroyed. The initial value is `nil`.
+    
+    @(params)
+    - window: The window whose pointer to set.
+    - pointer: The new value.
+    
+    @(errors)
+    - @(ref=Error.Not_Initialized)
+    
+    @(thread_safety=unsafe)
+    @(since=3.0)
+*/
 set_window_user_pointer :: proc(window: ^Window, pointer: rawptr) {
     glfwSetWindowUserPointer(window, pointer)
 }
 
+/*
+    Returns the user pointer of the specified window.
+    
+    This function returns the current value of the user-defined pointer of the specified window.
+    The initial value is `nil`.
+    
+    @(params)
+    - window: The window whose pointer to return
+    
+    @(errors)
+    - @(ref=Error.Not_Initialized)
+    
+    @(thread_safety=unsafe)
+    @(since=3.0)
+*/
 get_window_user_pointer :: proc(window: ^Window) -> rawptr {
     return glfwGetWindowUserPointer(window)
 }
 
+/*
+    Sets the position callback for the specified window.
+    
+    This function sets the position callback of the specified window, which is called when the
+    window is moved. The callback is provided with the position, in screen coordinates, of the
+    upper-left corner of the content area of the window.
+    
+    @(params)
+    - window: The window whose callback to set.
+    - callback: The new callback, or `nil` to remove the currently-set callback.
+    
+    @(returns)
+    - The previously-set callback, or `nil` if no callback was set or the library has not been
+        initialized.
+        
+    @(errors)
+    - @(ref=Error.Not_Initialized)
+    
+    @(thread_safety=main_thread_only)
+    @(since=3.0)
+*/
 set_window_pos_callback :: proc(window: ^Window, callback: Window_Pos_Proc) -> Window_Pos_Proc {
     return glfwSetWindowPosCallback(window, callback)
 }
 
+/*
+    Sets the size callback for the specified window.
+    
+    This function sets the size callback of the specified window, which is called when the window
+    is resized. The callback is provided with the size, in screen coordinates, of the content area
+    of the window.
+    
+    @(params)
+    - window: The window whose callback to set.
+    - callback: The new callback, or `nil` to remove the currently-set callback.
+    
+    @(returns)
+    - The previously-set callback, or `nil` if no callback was set or the library has not been
+        initialized.
+        
+    @(errors)
+    - @(ref=Error.Not_Initialized)
+    
+    @(thread_safety=main_thread_only)
+    @(since=1.0)
+*/
 set_window_size_callback :: proc(window: ^Window, callback: Window_Size_Proc) -> Window_Size_Proc {
     return glfwSetWindowSizeCallback(window, callback)
 }
 
+/*
+    Sets the close callback for the specified window.
+    
+    This function sets the close callback of the specified window, which is called when the user
+    attempts to close the window, for example by clicking the close widget in the title bar.
+    
+    The close flag is set before this callback is called, but you can modify it at any time with
+    @(ref=set_window_should_close)
+    
+    The close callback is not triggered by @(ref=destroy_window).
+    
+    @(params)
+    - window: The window whose callback to set.
+    - callback: The new callback, or `nil` to remove the currently-set callback.
+    
+    @(returns)
+    - The previously-set callback, or `nil` if no callback was set or the library has not been
+        initialized.
+        
+    @(errors)
+    - @(ref=Error.Not_Initialized)
+    
+    @(thread_safety=main_thread_only)
+    @(since=2.5)
+*/
 set_window_close_callback :: proc(window: ^Window, callback: Window_Close_Proc) -> Window_Close_Proc {
     return glfwSetWindowCloseCallback(window, callback)
 }
 
+/*
+    Sets the refresh callback for the specified window.
+    
+    This function sets the refresh callback of the specified window, which is called when the
+    content area of the window needs to be redrawn, for example, if the window has been exposed
+    after having been covered by another window.
+    
+    On compositing window systems, such as Aero, Compiz, Aqua or Wayland, where the window contents
+    are saved off-screen this callback may be called only very infrequently or never at all.
+
+    @(params)
+    - window: The window whose callback to set.
+    - callback: The new callback, or `nil` to remove the currently-set callback.
+    
+    @(returns)
+    - The previously-set callback, or `nil` if no callback was set or the library has not been
+        initialized.
+        
+    @(errors)
+    - @(ref=Error.Not_Initialized)
+    
+    @(thread_safety=main_thread_only)
+    @(since=2.5)
+*/
 set_window_refresh_callback :: proc(window: ^Window, callback: Window_Refresh_Proc) -> Window_Refresh_Proc {
     return glfwSetWindowRefreshCallback(window, callback)
 }
 
+/*
+    Sets the focus callback for the specified window.
+    
+    This function sets the focus callback of the specified window, which is called, when the window
+    gains or loses input focus.
+    
+    After the focus callback is called for a window that lost input focus, synthetic key and mouse
+    button release events will be generated for all such that had been pressed. For more information
+    see @(ref=set_key_callback) and @(ref=set_mouse_button_callback).
+
+    @(params)
+    - window: The window whose callback to set.
+    - callback: The new callback, or `nil` to remove the currently-set callback.
+    
+    @(returns)
+    - The previously-set callback, or `nil` if no callback was set or the library has not been
+        initialized.
+        
+    @(errors)
+    - @(ref=Error.Not_Initialized)
+    
+    @(thread_safety=main_thread_only)
+    @(since=3.0)
+*/
 set_window_focus_callback :: proc(window: ^Window, callback: Window_Focus_Proc) -> Window_Focus_Proc {
     return glfwSetWindowFocusCallback(window, callback)
 }
 
+/*
+    Sets the iconify callback for the specified window.
+    
+    This function sets the iconification callback of the specified window, which is called when the
+    window is iconified or restored.
+
+    @(params)
+    - window: The window whose callback to set.
+    - callback: The new callback, or `nil` to remove the currently-set callback.
+    
+    @(returns)
+    - The previously-set callback, or `nil` if no callback was set or the library has not been
+        initialized.
+        
+    @(errors)
+    - @(ref=Error.Not_Initialized)
+    
+    @(thread_safety=main_thread_only)
+    @(since=3.0)
+*/
 set_window_iconify_callback :: proc(window: ^Window, callback: Window_Iconify_Proc) -> Window_Iconify_Proc {
     return glfwSetWindowIconifyCallback(window, callback)
 }
 
+/*
+    Sets the maximize callback for the specified window.
+    
+    This function sets the maximization callback of the specified window, which is called, when
+    the window is maximized or restored.
+    
+    @(params)
+    - window: The window whose callback to set.
+    - callback: The new callback, or `nil` to remove the currently-set callback.
+    
+    @(returns)
+    - The previously-set callback, or `nil` if no callback was set or the library has not been
+        initialized.
+        
+    @(errors)
+    - @(ref=Error.Not_Initialized)
+    
+    @(thread_safety=main_thread_only)
+    @(since=3.3)
+*/
 set_window_maximize_callback :: proc(window: ^Window, callback: Window_Maximize_Proc) -> Window_Maximize_Proc {
     return glfwSetWindowMaximizeCallback(window, callback)
 }
 
+/*
+    Sets the framebuffer resize callback for the specified window.
+    
+    This function sets the framebuffer resize callback of the specified window, which is called when
+    the framebuffer of the specified window is resized.
+    
+    @(params)
+    - window: The window whose callback to set.
+    - callback: The new callback, or `nil` to remove the currently-set callback.
+    
+    @(returns)
+    - The previously-set callback, or `nil` if no callback was set or the library has not been
+        initialized.
+        
+    @(errors)
+    - @(ref=Error.Not_Initialized)
+    
+    @(thread_safety=main_thread_only)
+    @(since=3.0)    
+*/
 set_framebuffer_size_callback :: proc(window: ^Window, callback: Framebuffer_Size_Proc) -> Framebuffer_Size_Proc {
     return glfwSetFramebufferSizeCallback(window, callback)
 }
 
+/*
+    Sets the window content scale callback for the specified window.
+    
+    This function sets the window content scale callback of the specified window, which is called
+    when the content scale of the specified window changes.
+    
+    @(params)
+    - window: The window whose callback to set.
+    - callback: The new callback, or `nil` to remove the currently-set callback.
+    
+    @(returns)
+    - The previously-set callback, or `nil` if no callback was set or the library has not been
+        initialized.
+        
+    @(errors)
+    - @(ref=Error.Not_Initialized)
+    
+    @(thread_safety=main_thread_only)
+    @(since=3.3)    
+*/
 set_window_content_scale_callback :: proc(window: ^Window, callback: Window_Content_Scale_Proc) -> Window_Content_Scale_Proc {
     return glfwSetWindowContentScaleCallback(window, callback)
 }
 
-// Events.
-
+/*
+    Processes all pending events.
+    
+    This function processes only those events that are already in the event queue and returns
+    immediately. Processing events will cause the window and input callbacks associated with those
+    events to be called.
+    
+    On some platforms, a window move, resize or menu operations will cause event processing to
+    block. This is due to how event processing is designed on those platforms. You can use the
+    @(ref=set_window_refresh_callback) to redraw the contents of the window when necessary during
+    such operations.
+    
+    Do not assume that callbacks you set will *only* be called in response to event processing
+    functions like this one. While it is necessary to poll for events, window systems that require
+    GLFW to register callbacks of its own can pass those events onto the application callbacks
+    before returning.
+    
+    Event processing is not required for joystick input to work.
+    
+    @(errors)
+    - @(ref=Error.Not_Initialized)
+    - @(ref=Error.Platform_Error)
+    
+    @(reentrancy)
+    This function must not be called from a callback.
+    
+    @(thread_safety=main_thread_only)
+    @(since=1.0)
+*/
 poll_events :: proc() {
     glfwPollEvents()
 }
 
+/*
+    Waits until events are queued and processes them.
+    
+    This function puts the calling thread to sleep until at least one event is available in the
+    event queue. Once one or more events are available, it behaves exactly like @(ref=poll_events),
+    i.e. the events in the queue are processed and the function then returns immediately. Processing
+    events will cause the window and input callbacks associated with those events to be called.
+    
+    Since not all events are associated with callbacks, this function may return without a callback
+    having been called even if you are monitoring all callbacks.
+    
+    On some platforms, a window move, resize or menu operations will cause event processing to
+    block. This is due to how event processing is designed on those platforms. You can use the
+    @(ref=set_window_refresh_callback) to redraw the contents of your window when necessary during
+    such operations.
+    
+    Do not assume that callbacks you set will *only* be called in response to event processing
+    functions like this one. While it is necessary to poll for events, window systems that require
+    GLFW to register callbacks of its own can pass events to GLFW in response to many window system
+    function calls. GLFW will pass those events onto the application callbacks before returning.
+    
+    Event processing is not required for joystick input to work.
+    
+    @(errors)
+    - @(ref=Error.Not_Initialized)
+    - @(ref=Error.Platform_Error)
+    
+    @(reentrancy)
+    This function must not be called from a callback.
+    
+    @(thread_safety=main_thread_only)
+    @(since=2.5)
+*/
 wait_events :: proc() {
     glfwWaitEvents()
 }
 
+/*
+    Waits with timeout until events are queued and processes them.
+    
+    This function puts the calling thread to sleep until at least one event is available in the
+    event queue, or until the specified timeout is reached. If one or more events are available,
+    it behavaes exactly like @(ref=poll_events), i.e. the events in the queue are processed and
+    the function then returns immediately. Processing events will cause the window and input
+    callbacks associated with those events to be called.
+    
+    The timeout value must be a positive finite number.
+    
+    Since not all events are associated with callbacks, this function may return without a callabck
+    having been called even if you are monitoring all callbacks.
+    
+    On some platforms, a window move, resize or menu operations will cause event processing to
+    block. This is due to how event processing is designed on those platforms. You can use the
+    @(ref=set_window_refresh_callback) to redraw the contents of your window when necessary during
+    such operations.
+    
+    Do not assume that callbacks you set will *only* be called in response to event processing
+    functions like this one. While it is necessary to poll for events, window systems that require
+    GLFW to register callbacks of its own can pass events to GLFW in response to many window system
+    function calls. GLFW will pass those events on to the application callbacks before returning.
+    
+    Event processing is not required for joystick input to work.
+    
+    @(params)
+    - timeout: The maximum amount of time, in seconds, to wait.
+    
+    @(errors)
+    - @(ref=Error.Not_Initialized)
+    - @(ref=Error.Invalid_Value)
+    - @(ref=Error.Platform_Error)
+    
+    @(reentrancy)
+    This function must not be called from a callback.
+    
+    @(thread_safety=main_thread_only)
+    @(since=3.2)
+*/
 wait_events_timeout :: proc(timeout: f64) {
     glfwWaitEventsTimeout(timeout)
 }
 
+/*
+    Posts an empty event to the event queue.
+    
+    This function posts an empty event from the current thread to the event queue, causing
+    @(ref=wait_events) or @(ref=wait_events_timeout) to return.
+    
+    @(errors)
+    - @(ref=Error.Not_Initialized)
+    - @(ref=Error.Platform_Error)
+    
+    @(thread_safety=safe)
+    @(since=3.1)
+*/
 post_empty_event :: proc() {
     glfwPostEmptyEvent()
 }
 
-// Input.
+/*
+    Returns the value of an input option for the specified window.
+    
+    This function returns the value of an input option for the specified window.
+    
+    This function only returns boolean modes. In order to query the cursor mode, use
+    @(ref=get_input_mode_cursor).
+    
+    @(parrams)
+    - window: The window to query.
+    - mode: The input option to retrieve.
+    
+    @(errors)
+    - @(ref=Error.Not_Initialized)
+    - @(ref=Error.Invalid_Enum)
+    
+    @(include=get_input_mode_cursor)
+    
+    @(thread_safety=main_thread_only)
+    @(since=3.0)
+*/
+get_input_mode :: proc(window: ^Window, mode: Input_Mode) -> b32 {
+    return cast(b32) glfwGetInputMode(window, mode)
+}
 
-get_input_mode :: proc(window: ^Window, mode: Input_Mode) -> i32 {
-    return glfwGetInputMode(window, mode)
+// @(hide)
+get_input_mode_cursor :: proc(window: ^Window, mode: Input_Mode) -> Cursor_Mode {
+    return cast(Cursor_Mode) glfwGetInputMode(window, mode)
+}
+
+/*
+    Sets an input option for the specified window.
+    
+    This function sets an input mode option for the specified window.
+    
+    See the documentation on @(ref=Input_Mode) for the description of input modes.
+    
+    @(params)
+    - window: The window to set the input option for.
+    - mode: The input option to set.
+    - value: The value to set the input option to.
+    
+    @(errors)
+    - @(ref=Error.Not_Initialized)
+    - @(ref=Error.Invalid_Enum)
+    - @(ref=Error.Platform_Error)
+    - @(ref=Error.Feature_Unavailable) (see remark)
+    
+    @(remark)
+    If you specify @(ref=Input_Mode.Raw_Mouse_Motion) to be `true`, and the raw mouse motion
+    is not supported, @(ref=Error.Feature_Unavailable) is generated. Call
+    @(ref=raw_mouse_motion_supported) to query the support of raw mouse motion.
+*/
+set_input_mode :: proc {
+    set_input_mode_b32,
+    set_input_mode_cursor_mode,
 }
 
 @(private)
@@ -1099,35 +2178,219 @@ set_input_mode_b32 :: proc(window: ^Window, mode: Input_Mode, value: b32) {
 }
 
 @(private)
-set_input_mode_i32 :: proc(window: ^Window, mode: Input_Mode, value: i32) {
-    glfwSetInputMode(window, mode, value)
+set_input_mode_cursor_mode :: proc(window: ^Window, mode: Input_Mode, value: Cursor_Mode) {
+    glfwSetInputMode(window, mode, cast(i32) value)
 }
 
-set_input_mode :: proc {
-    set_input_mode_b32,
-    set_input_mode_i32,
-}
-
+/*
+    Returns whether raw mouse motion is supported.
+    
+    This function returns whether raw mouse motion is supported on the current system. This status
+    does not change after GLFW has been initialized, so you only need to check this once. If you
+    attempt to enable raw motion on a system that doesn't support it, @(ref=Error.Platform_Error)
+    will be emitted.
+    
+    Raw mouse motion is closer to the actual motion of the mouse across a surface. It is not
+    affected by the scaling and acceleration applied to the motion of the desktop cursor. That
+    processing is suitable for a cursor while raw motion is better for controlling, for example
+    a 3D camera. Because of this, raw mouse motion is only provided when the cursor is disabled.
+    
+    @(returns)
+    - `true`, if raw mouse motion is supported on the current machine, `false` otherwise.
+    
+    @(errors)
+    - @(ref=Error.Not_Initialized)
+    
+    @(since=3.3)
+*/
 raw_mouse_motion_supported :: proc() -> b32 {
     return glfwRawMouseMotionSupported()
 }
 
+/*
+    Returns the layout-specific name of the specified printable key.
+    
+    This function returns the name of the specified printable key, encoded as UTF-8. This is
+    typically the character that the key would produce without any modifier keys, intended for
+    displaying key bindings to the user. For dead keys, it is typically the diacritic it would
+    add to the character.
+    
+    **Do not use this function** for text input. You will break text input for many languages, even
+    if it happens to work on yours.
+    
+    If the key is @(ref=KEY_UNKNOWN), the scancode is used to identify the key, otherwise the
+    scancode is ignored. If you specify a non-printable key, or @(ref=KEY_UNKNOWN) and a scancode
+    that maps to a non-printable key, this function returns `nil` and does not emit an error.
+    
+    This behaviour allows you to always pass in the arguments from the key callback without
+    modification.
+    
+    The printable keys are:
+    - @(ref=Key.Apostrophe)
+    - @(ref=Key.Comma)
+    - @(ref=Key.Minus)
+    - @(ref=Key.Period)
+    - @(ref=Key.Slash)
+    - @(ref=Key.Semicolon)
+    - @(ref=Key.Equal)
+    - @(ref=Key.Left_Bracket)
+    - @(ref=Key.Right_Bracket)
+    - @(ref=Key.Backslash)
+    - @(ref=Key.World1)
+    - @(ref=Key.World2)
+    - @(ref=Key.Key0) through to @(ref=Key.Key9)
+    - @(ref=Key.A) through to - @(ref=Key.Z)
+    - @(ref=Key.KP_Decimal)
+    - @(ref=Key.KP_Divide)
+    - @(ref=Key.KP_Multiply)
+    - @(ref=Key.Subtract)
+    - @(ref=Key.Add)
+    - @(ref=Key.Equal)
+    
+    Names for printable keys depend on keyboard layout, while names for non-printable keys are the
+    same across layouts but depend on the application language and should be localized along with
+    other user-interface text.
+    
+    @(params)
+    - key: The key to query, or @(ref=KEY_UNKNOWN)
+    - scancode: The scncode of the key to query.
+    
+    @(returns)
+    - UTF-8 encoded, null-terminated string, storing the layout-specific name of the key, or `nil`.
+    
+    @(remark)
+    The contents of the returned string may change when a keyboard layout change event is received.
+    
+    @(lifetimes)
+    The returned string is allocated and freed by GLFW. You should not free it yourself. It is valid
+    until the library is terminated.
+    
+    @(thread_safety=safe)
+    @(since=3.2)
+*/
 get_key_name :: proc(key: Key, scancode: i32) -> cstring {
     return glfwGetKeyName(key, scancode)
 }
 
+/*
+    Returns the platform-specific scancode of the specified key.
+    
+    This function returns the platform-specific scancode of the specified key.
+    
+    If the key is @(ref=KEY_UNKNOWN), or does not exist on the keyboard, this procedure will
+    return `-1`.
+    
+    @(param)
+    - key: Any named key.
+    
+    @(returns)
+    - The platform-specific scancode for the key, or `-1` if an error occurred.
+    
+    @(errors)
+    - @(ref=Error.Not_Initialized)
+    - @(ref=Error.Invalid_Enum)
+    - @(ref=Error.Platform_Error)
+    
+    @(thread_safety=safe)
+    @(since=3.3)
+*/
 get_key_scancode :: proc(key: Key) -> i32 {
     return glfwGetKeyScancode(key)
 }
 
+/*
+    Returns the last reported state of a keyboard key for the specified window.
+    
+    This function returns the last state reported for the specified key to the specified window.
+    The returned state is one of @(ref=Action.Press), @(ref=Action.Release).
+    
+    The action @(ref=Action.Repeat) is only reported to the key callback.
+    
+    If the @(ref=Input_Mode.Sticky_Keys), input mode is enabled, this function returns
+    @(ref=Action.Press) the first time you call it for a key that was pressed, even if that key has
+    already been released.
+    
+    The key functions deal with physical keys, with @(ref=Key) named after their use on the
+    standard US keyboard layout. If you want to input text, use the Unicode character callback
+    instead.
+    
+    The modifier bit masks are not key tokens and cannot be used with this function.
+    
+    **Do not use this function** to implement text input.
+    
+    @(params)
+    - window: The desired window.
+    - key: The desired key. @(ref=KEY_UNKNOWN) is not a valid key for this function.
+    
+    @(returns)
+    - One of @(ref=Action.Press) or @(ref=Action.Release).
+    
+    @(errors)
+    - @(ref=Error.Not_Initialized)
+    - @(ref=Error.Invalid_Enum)
+    
+    @(thread_safety=main_thread_only)
+    @(since=3.0)
+*/
 get_key :: proc(window: ^Window, key: Key) -> Action {
     return glfwGetKey(window, key)
 }
 
+/*
+    Returns the last reported state of a mouse button for the specified window.
+    
+    This function returns the last reported for the specified mouse button to the specified window.
+    The returned state is one of @(ref=Action.Press) @(ref=Action.Release).
+    
+    If the @(ref=Input_Mode.Sticky_Mouse_Buttons) is enabled, this function returns
+    @(ref=Action.Press) the first time you call it for a mouse button that was pressed, even if
+    that mouse button has already been released.
+    
+    @(params)
+    - window: The desired window.
+    - button: The desired mouse button.
+    
+    @(returns)
+    - One of @(ref=Action.Press) or @(ref=Action.Release).
+    
+    @(errors)
+    - @(ref=Error.Not_Initialized)
+    - @(ref=Error.Invalid_Enum)
+    
+    @(thread_safety=main_thread_only)
+    @(since=1.0)
+*/
 get_mouse_button :: proc(window: ^Window, button: Mouse_Button) -> Action {
     return glfwGetMouseButton(window, button)
 }
 
+/*
+    Retrieves the position of the cursor relative to the content area of the window.
+    
+    This function returns the position of the cursor, in screen coordinates, relative to the 
+    upper-left corner of the content area of the specified window.
+    
+    If the cursor is disabled with @(ref=Cursor_Mode.Disabled), then the cursor position is
+    unbounded and limited only by the minimum and maximum values of `f64`.
+    
+    The coordinate can be converted to their integer equivalents with the `floor` function.
+    Casting directly to an integer types only for positive coordinates, but is slightly incorrect
+    for negative coordinates.
+    
+    @(params)
+    - window: The desired window.
+    
+    @(returns)
+    1. The x-coordinates of the cursor position, relative to the left edge of the content area.
+    2. The y-coordinate of the cursor position, relative to the top edge of the content area.
+    
+    @(errors)
+    - @(ref=Error.Not_Initialized)
+    - @(ref=Error.Platform_Error)
+    
+    @(thread_safety=main_thread_only)
+    @(since=3.0)
+*/
 get_cursor_pos :: proc(window: ^Window) -> (f64, f64) {
     pos_x: f64 = ---
     pos_y: f64 = ---
@@ -1135,6 +2398,37 @@ get_cursor_pos :: proc(window: ^Window) -> (f64, f64) {
     return pos_x, pos_y
 }
 
+/*
+    Sets the position of the cursor, relative to the content area of the window.
+    
+    This function sets the position, in screen coordinates, of the cursor relative to the upper-left
+    corner of the content area of the specified window. The window must have input focus. If the
+    window does not have input focus when this function is called, it fails silently.
+    
+    **Do not use this function** to implement things like camera controls. GLFW already provides
+    the @(ref=Cursor_Mode.Disabled) cursor mode that hides the cursor motion. See
+    @(ref=set_input_mode) for more information.
+    
+    If the cursor mode is @(ref=Cursor_Mode.Disabled), then the cursor position is unconstrained
+    and limited only by the minimum and maximum values of `f64`.
+    
+    @(params)
+    - window: The desired window.
+    - pos_x: The desired x-coordinate, relative to the left edge of the content area.
+    - pos_y: The desired y-coordinate, relative to the top edge of the content area.
+    
+    @(errors)
+    - @(ref=Error.Not_Initialized)
+    - @(ref=Error.Platform_Error)
+    - @(ref=Error.Feature_Unavailable) (see remark)
+    
+    @(remark=wayland)
+    This function will only work when the cursor mode is @(ref=Cursor_Mode.Disabled). Otherwise
+    it will emit @(ref=Error.Feature_Unavailable).
+    
+    @(thread_safety=main_thread_only)
+    @(since=3.0)
+*/
 set_cursor_pos :: proc(window: ^Window, pos_x: f64, pos_y: f64) {
     glfwSetCursorPos(window, pos_x, pos_y)
 }

@@ -165,8 +165,8 @@ foreign glfw {
         size_y: i32,
         refresh_rate: i32,
     ) ---
-    glfwGetWindowAttrib :: proc(window: ^Window, attrib: Window_Hint) -> b32 ---
-    glfwSetWindowAttrib :: proc(window: ^Window, attrib: Window_Hint, value: b32) -> b32 ---
+    glfwGetWindowAttrib :: proc(window: ^Window, attrib: Window_Hint) -> i32 ---
+    glfwSetWindowAttrib :: proc(window: ^Window, attrib: Window_Hint, value: b32) -> i32 ---
     // Callbacks.
     glfwSetWindowUserPointer :: proc(
         window: ^Window,

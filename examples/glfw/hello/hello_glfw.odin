@@ -1,4 +1,3 @@
-
 package hello
 
 import "core:os"
