@@ -1,4 +1,3 @@
-
 package glfw
 
 // TODO: Integrations with vulkan and OpenGL

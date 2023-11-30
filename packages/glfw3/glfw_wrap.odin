@@ -32,25 +32,25 @@ init_hint :: proc {
 
 // @(hide)
 @(private)
-init_hint_b32 :: proc(hint: Init_Hint, value: b32) {
+init_hint_b32 :: proc "contextless" (hint: Init_Hint, value: b32) {
     glfwInitHint(hint, cast(i32) value)
 }
 
 // @(hide)
 @(private)
-init_hint_angle_platform :: proc(hint: Init_Hint, value: Angle_Platform) {
+init_hint_angle_platform :: proc "contextless" (hint: Init_Hint, value: Angle_Platform) {
     glfwInitHint(hint, cast(i32) value)
 }
 
 // @(hide)
 @(private)
-init_hint_platform :: proc(hint: Init_Hint, value: Platform) {
+init_hint_platform :: proc "contextless" (hint: Init_Hint, value: Platform) {
     glfwInitHint(hint, cast(i32) value)
 }
 
 // @(hide)
 @(private)
-init_hint_wayland_libdecor :: proc(hint: Init_Hint, value: Wayland_Libdecor) {
+init_hint_wayland_libdecor :: proc "contextless" (hint: Init_Hint, value: Wayland_Libdecor) {
     glfwInitHint(hint, cast(i32) value)
 }
 
@@ -95,7 +95,7 @@ init_hint_wayland_libdecor :: proc(hint: Init_Hint, value: Wayland_Libdecor) {
     @(thread_safety=main_thread_only)
     @(since=1.0)
 */
-init :: proc() -> b32 {
+init :: proc "contextless" () -> b32 {
     return glfwInit()
 }
 
@@ -121,7 +121,7 @@ init :: proc() -> b32 {
     @(thread_safety=main_thread_only)
     @(since=1.0)
 */
-terminate :: proc() {
+terminate :: proc "contextless" () {
     glfwTerminate()
 }
 
@@ -138,7 +138,7 @@ terminate :: proc() {
     @(errors)
     - None.
 */
-get_version :: proc() -> (i32, i32, i32) {
+get_version :: proc "contextless" () -> (i32, i32, i32) {
     major: i32 = ---
     minor: i32 = ---
     patch: i32 = ---
@@ -164,7 +164,7 @@ get_version :: proc() -> (i32, i32, i32) {
 
     @(since=3.0)
 */
-get_version_string :: proc() -> cstring {
+get_version_string :: proc "contextless" () -> cstring {
     return glfwGetVersionString()
 }
 
@@ -194,7 +194,7 @@ get_version_string :: proc() -> cstring {
     @(thread_safety=safe)
     @(since=3.3)
 */
-get_error :: proc() -> (Error, cstring) {
+get_error :: proc "contextless" () -> (Error, cstring) {
     description: cstring = ---
     error_code := glfwGetError(&description)
     return error_code, description
@@ -204,7 +204,7 @@ get_error :: proc() -> (Error, cstring) {
     Sets the error callback.
     
     This function sets the error callback, which is called with the error code and a human-readable
-    error description each tyime a GLFW error occurs.
+    error description each time a GLFW error occurs.
     
     The error code is set before the callback is called. Calling @(ref=get_error) from the error
     callback will return the same value as the error code argument.
@@ -231,7 +231,7 @@ get_error :: proc() -> (Error, cstring) {
     @(include=Error_Proc)
     @(since=3.0)
 */
-set_error_callback :: proc(callback: Error_Proc) -> Error_Proc {
+set_error_callback :: proc "contextless" (callback: Error_Proc) -> Error_Proc {
     return glfwSetErrorCallback(callback)
 }
 
@@ -256,7 +256,7 @@ set_error_callback :: proc(callback: Error_Proc) -> Error_Proc {
     @(thread_safety=main_only)
     @(since=3.0)
 */
-get_monitors :: proc() -> []^Monitor {
+get_monitors :: proc "contextless" () -> []^Monitor {
     count: i32 = ---
     monitors := glfwGetMonitors(&count)
     return monitors[:count]
@@ -277,7 +277,7 @@ get_monitors :: proc() -> []^Monitor {
     @(thread_safety=main_thread_only)
     @(since=3.0)
 */
-get_primary_monitor :: proc() -> ^Monitor {
+get_primary_monitor :: proc "contextless" () -> ^Monitor {
     return glfwGetPrimaryMonitor()
 }
 
@@ -301,7 +301,7 @@ get_primary_monitor :: proc() -> ^Monitor {
     @(thread_safety=main_thread_only)
     @(since=3.0)
 */
-get_monitor_pos :: proc(monitor: ^Monitor) -> (i32, i32) {
+get_monitor_pos :: proc "contextless" (monitor: ^Monitor) -> (i32, i32) {
     pos_x: i32 = ---
     pos_y: i32 = ---
     glfwGetMonitorPos(monitor, &pos_x, &pos_y)
@@ -331,7 +331,7 @@ get_monitor_pos :: proc(monitor: ^Monitor) -> (i32, i32) {
     @(thread_safety=main_thread_only)
     @(since=3.3)
 */
-get_monitor_workarea :: proc(monitor: ^Monitor) -> (i32, i32, i32, i32) {
+get_monitor_workarea :: proc "contextless" (monitor: ^Monitor) -> (i32, i32, i32, i32) {
     pos_x: i32 = ---
     pos_y: i32 = ---
     size_x: i32 = ---
@@ -366,7 +366,7 @@ get_monitor_workarea :: proc(monitor: ^Monitor) -> (i32, i32, i32, i32) {
     @(thread_safety=main_thread_only)
     @(since=3.0)
 */
-get_monitor_physical_size :: proc(monitor: ^Monitor) -> (i32, i32) {
+get_monitor_physical_size :: proc "contextless" (monitor: ^Monitor) -> (i32, i32) {
     size_x_mm: i32 = ---
     size_y_mm: i32 = ---
     glfwGetMonitorPhysicalSize(monitor, &size_x_mm, &size_y_mm)
@@ -401,7 +401,7 @@ get_monitor_physical_size :: proc(monitor: ^Monitor) -> (i32, i32) {
     @(thread_safety=main_thread_only)
     @(since=3.3)
 */
-get_monitor_content_scale :: proc(monitor: ^Monitor) -> (f32, f32) {
+get_monitor_content_scale :: proc "contextless" (monitor: ^Monitor) -> (f32, f32) {
     scale_x: f32 = ---
     scale_y: f32 = ---
     glfwGetMonitorContentScale(monitor, &scale_x, &scale_y)
@@ -431,7 +431,7 @@ get_monitor_content_scale :: proc(monitor: ^Monitor) -> (f32, f32) {
     @(thread_safety=main_thread_only)
     @(since=3.0)
 */
-get_monitor_name :: proc(monitor: ^Monitor) -> cstring {
+get_monitor_name :: proc "contextless" (monitor: ^Monitor) -> cstring {
     return glfwGetMonitorName(monitor)
 }
 
@@ -452,7 +452,7 @@ get_monitor_name :: proc(monitor: ^Monitor) -> cstring {
     @(thread_safety=safe)
     @(since=3.3)
 */
-set_monitor_user_pointer :: proc(monitor: ^Monitor, pointer: rawptr) {
+set_monitor_user_pointer :: proc "contextless" (monitor: ^Monitor, pointer: rawptr) {
     glfwSetMonitorUserPointer(monitor, pointer)
 }
 
@@ -475,7 +475,7 @@ set_monitor_user_pointer :: proc(monitor: ^Monitor, pointer: rawptr) {
     @(thread_safety=safe)
     @(since=3.3)
 */
-get_monitor_user_pointer :: proc(monitor: ^Monitor) -> rawptr {
+get_monitor_user_pointer :: proc "contextless" (monitor: ^Monitor) -> rawptr {
     return glfwGetMonitorUserPointer(monitor)
 }
 
@@ -499,7 +499,7 @@ get_monitor_user_pointer :: proc(monitor: ^Monitor) -> rawptr {
     @(thread_safety=main_thread_only)
     @(since=3.0)
 */
-set_monitor_callback :: proc(callback: Monitor_Proc) -> Monitor_Proc {
+set_monitor_callback :: proc "contextless" (callback: Monitor_Proc) -> Monitor_Proc {
     return glfwSetMonitorCallback(callback)
 }
 
@@ -529,7 +529,7 @@ set_monitor_callback :: proc(callback: Monitor_Proc) -> Monitor_Proc {
     @(thread_safety=main_thread_only)
     @(since=1.0)
 */
-get_video_modes :: proc(monitor: ^Monitor) -> []Video_Mode {
+get_video_modes :: proc "contextless" (monitor: ^Monitor) -> []Video_Mode {
     count: i32 = ---
     modes := glfwGetVideoModes(monitor, &count)
     return modes[:count]
@@ -555,7 +555,7 @@ get_video_modes :: proc(monitor: ^Monitor) -> []Video_Mode {
     @(thread_safety=main_thread_only)
     @(since=3.0)
 */
-get_video_mode :: proc(monitor: ^Monitor) -> ^Video_Mode {
+get_video_mode :: proc "contextless" (monitor: ^Monitor) -> ^Video_Mode {
     return glfwGetVideoMode(monitor)
 }
 
@@ -589,7 +589,7 @@ get_video_mode :: proc(monitor: ^Monitor) -> ^Video_Mode {
     @(thread_safety=main_thread_only)
     @(since=3.0)
 */
-set_gamma :: proc(monitor: ^Monitor, gamma: f32) {
+set_gamma :: proc "contextless" (monitor: ^Monitor, gamma: f32) {
     glfwSetGamma(monitor, gamma)
 }
 
@@ -621,7 +621,7 @@ set_gamma :: proc(monitor: ^Monitor, gamma: f32) {
     @(thread_safety=main_thread_only)
     @(since=3.0)
 */
-get_gamma_ramp :: proc(monitor: ^Monitor) -> ^Gamma_Ramp {
+get_gamma_ramp :: proc "contextless" (monitor: ^Monitor) -> ^Gamma_Ramp {
     return glfwGetGammaRamp(monitor)
 }
 
@@ -664,7 +664,7 @@ get_gamma_ramp :: proc(monitor: ^Monitor) -> ^Gamma_Ramp {
     @(thread_safety=main_thread_only)
     @(since=3.0)
 */
-set_gamma_ramp :: proc(monitor: ^Monitor, gamma_ramp: ^Gamma_Ramp) {
+set_gamma_ramp :: proc "contextless" (monitor: ^Monitor, gamma_ramp: ^Gamma_Ramp) {
     glfwSetGammaRamp(monitor, gamma_ramp)
 }
 
@@ -679,7 +679,7 @@ set_gamma_ramp :: proc(monitor: ^Monitor, gamma_ramp: ^Gamma_Ramp) {
     @(thread_safety=main_thread_only)
     @(since=3.0)
 */
-default_window_hints :: proc() {
+default_window_hints :: proc "contextless" () {
     glfwDefaultWindowHints()
 }
 
@@ -718,24 +718,31 @@ window_hint :: proc {
     window_hint_i32,
     window_hint_b32,
     window_hint_cstring,
+    window_hint_opengl_profile,
 }
 
 // @(hide)
 @(private)
-window_hint_i32 :: proc(hint: Window_Hint, value: i32) {
+window_hint_i32 :: proc "contextless" (hint: Window_Hint, value: i32) {
     glfwWindowHint(hint, value)
 }
 
 // @(hide)
 @(private)
-window_hint_b32 :: proc(hint: Window_Hint, value: b32) {
+window_hint_b32 :: proc "contextless" (hint: Window_Hint, value: b32) {
     glfwWindowHint(hint, cast(i32) value)
 }
 
 // @(hide)
 @(private)
-window_hint_cstring :: proc(hint: Window_Hint, value: cstring) {
+window_hint_cstring :: proc "contextless" (hint: Window_Hint, value: cstring) {
     glfwWindowHintString(hint, value)
+}
+
+// @(hide)
+@(private)
+window_hint_opengl_profile :: proc "contextless" (hint: Window_Hint, profile: OpenGL_Profile) {
+    glfwWindowHint(hint, cast(i32) profile)
 }
 
 /*
@@ -851,7 +858,7 @@ window_hint_cstring :: proc(hint: Window_Hint, value: cstring) {
     @(thread_safety=main_thread_only)
     @(since=3.0)
 */
-create_window :: proc(
+create_window :: proc "contextless" (
     size_x:  i32,
     size_y:  i32,
     title:   cstring,
@@ -887,7 +894,7 @@ create_window :: proc(
     @(thread_safety=main_thread_only)
     @(since=3.0)
 */
-destroy_window :: proc(window: ^Window) {
+destroy_window :: proc "contextless" (window: ^Window) {
     glfwDestroyWindow(window)
 }
 
@@ -905,7 +912,7 @@ destroy_window :: proc(window: ^Window) {
     @(thread_safety=safe)
     @(since=3.0)
 */
-window_should_close :: proc(window: ^Window) -> b32 {
+window_should_close :: proc "contextless" (window: ^Window) -> b32 {
     return glfwWindowShouldClose(window)
 }
 
@@ -927,7 +934,7 @@ window_should_close :: proc(window: ^Window) -> b32 {
     
     @(since=3.0)
 */
-set_window_should_close :: proc(window: ^Window, should_close: b32) {
+set_window_should_close :: proc "contextless" (window: ^Window, should_close: b32) {
     glfwSetWindowShouldClose(window, should_close)
 }
 
@@ -946,7 +953,7 @@ set_window_should_close :: proc(window: ^Window, should_close: b32) {
     @(thread_safety=safe)
     @(since=1.0)
 */
-set_window_title :: proc(window: ^Window, title: cstring) {
+set_window_title :: proc "contextless" (window: ^Window, title: cstring) {
     glfwSetWindowTitle(window, title)
 }
 
@@ -985,7 +992,7 @@ set_window_title :: proc(window: ^Window, title: cstring) {
     
     @(since=3.2)
 */
-set_window_icon :: proc(window: ^Window, icons: []Image) {
+set_window_icon :: proc "contextless" (window: ^Window, icons: []Image) {
     glfwSetWindowIcon(window, cast(i32) len(icons), raw_data(icons))
 }
 
@@ -1014,7 +1021,7 @@ set_window_icon :: proc(window: ^Window, icons: []Image) {
     @(thread_safety=main_thread_only)
     @(since=3.0)
 */
-get_window_pos :: proc(window: ^Window) -> (i32, i32) {
+get_window_pos :: proc "contextless" (window: ^Window) -> (i32, i32) {
     pos_x: i32 = ---
     pos_y: i32 = ---
     glfwGetWindowPos(window, &pos_x, &pos_y)
@@ -1051,7 +1058,7 @@ get_window_pos :: proc(window: ^Window) -> (i32, i32) {
     @(thread_safety=main_thread_only)
     @(since=1.0)
 */
-set_window_pos :: proc(window: ^Window, pos_x: i32, pos_y: i32) {
+set_window_pos :: proc "contextless" (window: ^Window, pos_x: i32, pos_y: i32) {
     glfwSetWindowPos(window, pos_x, pos_y)
 }
 
@@ -1077,7 +1084,7 @@ set_window_pos :: proc(window: ^Window, pos_x: i32, pos_y: i32) {
     
     @(since=1.0)
 */
-get_window_size :: proc(window: ^Window) -> (i32, i32) {
+get_window_size :: proc "contextless" (window: ^Window) -> (i32, i32) {
     size_x: i32 = ---
     size_y: i32 = ---
     glfwGetWindowSize(window, &size_x, &size_y)
@@ -1121,7 +1128,7 @@ get_window_size :: proc(window: ^Window) -> (i32, i32) {
     @(thread_safety=main_thread_only)
     @(since=3.2)
 */
-set_window_size_limits :: proc(
+set_window_size_limits :: proc "contextless" (
     window: ^Window,
     min_size_x: i32 = DONT_CARE,
     min_size_y: i32 = DONT_CARE,
@@ -1167,7 +1174,7 @@ set_window_size_limits :: proc(
     @(thread_safety=main_thread_only)
     @(since=3.2)
 */
-set_window_aspect_ratio :: proc(window: ^Window, numerator: i32, denominator: i32) {
+set_window_aspect_ratio :: proc "contextless" (window: ^Window, numerator: i32, denominator: i32) {
     glfwSetWindowAspectRatio(window, numerator, denominator)
 }
 
@@ -1201,7 +1208,7 @@ set_window_aspect_ratio :: proc(window: ^Window, numerator: i32, denominator: i3
     @(thread_safety=main_thread_only)
     @(since=1.0)
 */
-set_window_size :: proc(window: ^Window, size_x: i32, size_y: i32) {
+set_window_size :: proc "contextless" (window: ^Window, size_x: i32, size_y: i32) {
     glfwSetWindowSize(window, size_x, size_y)
 }
 
@@ -1225,7 +1232,7 @@ set_window_size :: proc(window: ^Window, size_x: i32, size_y: i32) {
     @(thread_safety=main_thread_only)
     @(since=3.0)
 */
-get_framebuffer_size :: proc(window: ^Window) -> (i32, i32) {
+get_framebuffer_size :: proc "contextless" (window: ^Window) -> (i32, i32) {
     size_x: i32 = ---
     size_y: i32 = ---
     glfwGetFramebufferSize(window, &size_x, &size_y)
@@ -1258,7 +1265,7 @@ get_framebuffer_size :: proc(window: ^Window) -> (i32, i32) {
     @(thread_safety=main_thread_only)
     @(since=3.1)
 */
-get_window_frame_size :: proc(window: ^Window) -> (i32, i32, i32, i32) {
+get_window_frame_size :: proc "contextless" (window: ^Window) -> (i32, i32, i32, i32) {
     left:   i32 = ---
     top:    i32 = ---
     right:  i32 = ---
@@ -1294,7 +1301,7 @@ get_window_frame_size :: proc(window: ^Window) -> (i32, i32, i32, i32) {
     @(thread_safety=main_thread_only)
     @(since=3.0)
 */
-get_window_content_scale :: proc(window: ^Window) -> (f32, f32) {
+get_window_content_scale :: proc "contextless" (window: ^Window) -> (f32, f32) {
     scale_x: f32 = ---
     scale_y: f32 = ---
     glfwGetWindowContentScale(window, &scale_x, &scale_y)
@@ -1325,7 +1332,7 @@ get_window_content_scale :: proc(window: ^Window) -> (f32, f32) {
     @(thread_safety=main_thread_only)
     @(since=3.3)
 */
-get_window_opacity :: proc(window: ^Window) -> f32 {
+get_window_opacity :: proc "contextless" (window: ^Window) -> f32 {
     return glfwGetWindowOpacity(window)
 }
 
@@ -1358,7 +1365,7 @@ get_window_opacity :: proc(window: ^Window) -> f32 {
     @(thread_safety=main_thread_only)
     @(since=3.3)
 */
-set_window_opacity :: proc(window: ^Window, opacity: f32) {
+set_window_opacity :: proc "contextless" (window: ^Window, opacity: f32) {
     glfwSetWindowOpacity(window, opacity)
 }
 
@@ -1385,7 +1392,7 @@ set_window_opacity :: proc(window: ^Window, opacity: f32) {
     @(thread_safety=main_thread_only)
     @(since=2.1)
 */
-iconify_window :: proc(window: ^Window) {
+iconify_window :: proc "contextless" (window: ^Window) {
     glfwIconifyWindow(window)
 }
 
@@ -1408,7 +1415,7 @@ iconify_window :: proc(window: ^Window) {
     @(thread_safety=main_thread_only)
     @(since=2.1)
 */
-restore_window :: proc(window: ^Window) {
+restore_window :: proc "contextless" (window: ^Window) {
     glfwRestoreWindow(window)
 }
 
@@ -1430,7 +1437,7 @@ restore_window :: proc(window: ^Window) {
     @(thread_safety=main_thread_only)
     @(since=3.2)
 */
-maximize_window :: proc(window: ^Window) {
+maximize_window :: proc "contextless" (window: ^Window) {
     glfwMaximizeWindow(window)
 }
 
@@ -1459,7 +1466,7 @@ maximize_window :: proc(window: ^Window) {
     @(thread_safety=main_thread_only)
     @(since=3.0)
 */
-show_window :: proc(window: ^Window) {
+show_window :: proc "contextless" (window: ^Window) {
     glfwShowWindow(window)
 }
 
@@ -1478,7 +1485,7 @@ show_window :: proc(window: ^Window) {
     
     (since=3.0)
 */
-hide_window :: proc(window: ^Window) {
+hide_window :: proc "contextless" (window: ^Window) {
     glfwHideWindow(window)
 }
 
@@ -1512,7 +1519,7 @@ hide_window :: proc(window: ^Window) {
     @(thread_safety=main_thread_only)
     @(since=3.2)
 */
-focus_window :: proc(window: ^Window) {
+focus_window :: proc "contextless" (window: ^Window) {
     glfwFocusWindow(window)
 }
 
@@ -1537,7 +1544,7 @@ focus_window :: proc(window: ^Window) {
     @(thread_safety=main_thread_only)
     @(since=3.3)
 */
-request_window_attention :: proc(window: ^Window) {
+request_window_attention :: proc "contextless" (window: ^Window) {
     glfwRequestWindowAttention(window)
 }
 
@@ -1555,7 +1562,7 @@ request_window_attention :: proc(window: ^Window) {
     @(thread_safety=main_thread_only)
     @(since=3.0)
 */
-window_monitor :: proc(window: ^Window) -> ^Monitor {
+window_monitor :: proc "contextless" (window: ^Window) -> ^Monitor {
     return glfwWindowMonitor(window)
 }
 
@@ -1608,7 +1615,7 @@ window_monitor :: proc(window: ^Window) -> ^Monitor {
     @(thread_safety=main_thread_only)
     @(since=3.2)
 */
-set_window_monitor :: proc(
+set_window_monitor :: proc "contextless" (
     window: ^Window,
     monitor: ^Monitor,
     pos_x: i32,
@@ -1662,12 +1669,12 @@ set_window_monitor :: proc(
 get_window_attrib :: get_window_attrib_b32
 
 // @(hide)
-get_window_attrib_i32 :: proc(window: ^Window, attrib: Window_Hint) -> i32 {
+get_window_attrib_i32 :: proc "contextless" (window: ^Window, attrib: Window_Hint) -> i32 {
     return glfwGetWindowAttrib(window, attrib)
 }
 
 // @(hide)
-get_window_attrib_b32 :: proc(window: ^Window, attrib: Window_Hint) -> b32 {
+get_window_attrib_b32 :: proc "contextless" (window: ^Window, attrib: Window_Hint) -> b32 {
     return cast(b32) glfwGetWindowAttrib(window, attrib)
 }
 
@@ -1709,7 +1716,7 @@ get_window_attrib_b32 :: proc(window: ^Window, attrib: Window_Hint) -> b32 {
     @(thread_safety=main_thread_only)
     @(since=3.3)
 */
-set_window_attrib :: proc(window: ^Window, attrib: Window_Hint, value: b32) {
+set_window_attrib :: proc "contextless" (window: ^Window, attrib: Window_Hint, value: b32) {
     glfwSetWindowAttrib(window, attrib, cast(b32) value)
 }
 
@@ -1729,7 +1736,7 @@ set_window_attrib :: proc(window: ^Window, attrib: Window_Hint, value: b32) {
     @(thread_safety=unsafe)
     @(since=3.0)
 */
-set_window_user_pointer :: proc(window: ^Window, pointer: rawptr) {
+set_window_user_pointer :: proc "contextless" (window: ^Window, pointer: rawptr) {
     glfwSetWindowUserPointer(window, pointer)
 }
 
@@ -1748,7 +1755,7 @@ set_window_user_pointer :: proc(window: ^Window, pointer: rawptr) {
     @(thread_safety=unsafe)
     @(since=3.0)
 */
-get_window_user_pointer :: proc(window: ^Window) -> rawptr {
+get_window_user_pointer :: proc "contextless" (window: ^Window) -> rawptr {
     return glfwGetWindowUserPointer(window)
 }
 
@@ -1773,7 +1780,7 @@ get_window_user_pointer :: proc(window: ^Window) -> rawptr {
     @(thread_safety=main_thread_only)
     @(since=3.0)
 */
-set_window_pos_callback :: proc(window: ^Window, callback: Window_Pos_Proc) -> Window_Pos_Proc {
+set_window_pos_callback :: proc "contextless" (window: ^Window, callback: Window_Pos_Proc) -> Window_Pos_Proc {
     return glfwSetWindowPosCallback(window, callback)
 }
 
@@ -1798,7 +1805,7 @@ set_window_pos_callback :: proc(window: ^Window, callback: Window_Pos_Proc) -> W
     @(thread_safety=main_thread_only)
     @(since=1.0)
 */
-set_window_size_callback :: proc(window: ^Window, callback: Window_Size_Proc) -> Window_Size_Proc {
+set_window_size_callback :: proc "contextless" (window: ^Window, callback: Window_Size_Proc) -> Window_Size_Proc {
     return glfwSetWindowSizeCallback(window, callback)
 }
 
@@ -1827,7 +1834,7 @@ set_window_size_callback :: proc(window: ^Window, callback: Window_Size_Proc) ->
     @(thread_safety=main_thread_only)
     @(since=2.5)
 */
-set_window_close_callback :: proc(window: ^Window, callback: Window_Close_Proc) -> Window_Close_Proc {
+set_window_close_callback :: proc "contextless" (window: ^Window, callback: Window_Close_Proc) -> Window_Close_Proc {
     return glfwSetWindowCloseCallback(window, callback)
 }
 
@@ -1855,7 +1862,7 @@ set_window_close_callback :: proc(window: ^Window, callback: Window_Close_Proc) 
     @(thread_safety=main_thread_only)
     @(since=2.5)
 */
-set_window_refresh_callback :: proc(window: ^Window, callback: Window_Refresh_Proc) -> Window_Refresh_Proc {
+set_window_refresh_callback :: proc "contextless" (window: ^Window, callback: Window_Refresh_Proc) -> Window_Refresh_Proc {
     return glfwSetWindowRefreshCallback(window, callback)
 }
 
@@ -1883,7 +1890,7 @@ set_window_refresh_callback :: proc(window: ^Window, callback: Window_Refresh_Pr
     @(thread_safety=main_thread_only)
     @(since=3.0)
 */
-set_window_focus_callback :: proc(window: ^Window, callback: Window_Focus_Proc) -> Window_Focus_Proc {
+set_window_focus_callback :: proc "contextless" (window: ^Window, callback: Window_Focus_Proc) -> Window_Focus_Proc {
     return glfwSetWindowFocusCallback(window, callback)
 }
 
@@ -1907,7 +1914,7 @@ set_window_focus_callback :: proc(window: ^Window, callback: Window_Focus_Proc) 
     @(thread_safety=main_thread_only)
     @(since=3.0)
 */
-set_window_iconify_callback :: proc(window: ^Window, callback: Window_Iconify_Proc) -> Window_Iconify_Proc {
+set_window_iconify_callback :: proc "contextless" (window: ^Window, callback: Window_Iconify_Proc) -> Window_Iconify_Proc {
     return glfwSetWindowIconifyCallback(window, callback)
 }
 
@@ -1931,7 +1938,7 @@ set_window_iconify_callback :: proc(window: ^Window, callback: Window_Iconify_Pr
     @(thread_safety=main_thread_only)
     @(since=3.3)
 */
-set_window_maximize_callback :: proc(window: ^Window, callback: Window_Maximize_Proc) -> Window_Maximize_Proc {
+set_window_maximize_callback :: proc "contextless" (window: ^Window, callback: Window_Maximize_Proc) -> Window_Maximize_Proc {
     return glfwSetWindowMaximizeCallback(window, callback)
 }
 
@@ -1955,7 +1962,7 @@ set_window_maximize_callback :: proc(window: ^Window, callback: Window_Maximize_
     @(thread_safety=main_thread_only)
     @(since=3.0)    
 */
-set_framebuffer_size_callback :: proc(window: ^Window, callback: Framebuffer_Size_Proc) -> Framebuffer_Size_Proc {
+set_framebuffer_size_callback :: proc "contextless" (window: ^Window, callback: Framebuffer_Size_Proc) -> Framebuffer_Size_Proc {
     return glfwSetFramebufferSizeCallback(window, callback)
 }
 
@@ -1979,7 +1986,7 @@ set_framebuffer_size_callback :: proc(window: ^Window, callback: Framebuffer_Siz
     @(thread_safety=main_thread_only)
     @(since=3.3)    
 */
-set_window_content_scale_callback :: proc(window: ^Window, callback: Window_Content_Scale_Proc) -> Window_Content_Scale_Proc {
+set_window_content_scale_callback :: proc "contextless" (window: ^Window, callback: Window_Content_Scale_Proc) -> Window_Content_Scale_Proc {
     return glfwSetWindowContentScaleCallback(window, callback)
 }
 
@@ -2012,7 +2019,7 @@ set_window_content_scale_callback :: proc(window: ^Window, callback: Window_Cont
     @(thread_safety=main_thread_only)
     @(since=1.0)
 */
-poll_events :: proc() {
+poll_events :: proc "contextless" () {
     glfwPollEvents()
 }
 
@@ -2049,7 +2056,7 @@ poll_events :: proc() {
     @(thread_safety=main_thread_only)
     @(since=2.5)
 */
-wait_events :: proc() {
+wait_events :: proc "contextless" () {
     glfwWaitEvents()
 }
 
@@ -2093,7 +2100,7 @@ wait_events :: proc() {
     @(thread_safety=main_thread_only)
     @(since=3.2)
 */
-wait_events_timeout :: proc(timeout: f64) {
+wait_events_timeout :: proc "contextless" (timeout: f64) {
     glfwWaitEventsTimeout(timeout)
 }
 
@@ -2110,7 +2117,7 @@ wait_events_timeout :: proc(timeout: f64) {
     @(thread_safety=safe)
     @(since=3.1)
 */
-post_empty_event :: proc() {
+post_empty_event :: proc "contextless" () {
     glfwPostEmptyEvent()
 }
 
@@ -2135,12 +2142,12 @@ post_empty_event :: proc() {
     @(thread_safety=main_thread_only)
     @(since=3.0)
 */
-get_input_mode :: proc(window: ^Window, mode: Input_Mode) -> b32 {
+get_input_mode :: proc "contextless" (window: ^Window, mode: Input_Mode) -> b32 {
     return cast(b32) glfwGetInputMode(window, mode)
 }
 
 // @(hide)
-get_input_mode_cursor :: proc(window: ^Window, mode: Input_Mode) -> Cursor_Mode {
+get_input_mode_cursor :: proc "contextless" (window: ^Window, mode: Input_Mode) -> Cursor_Mode {
     return cast(Cursor_Mode) glfwGetInputMode(window, mode)
 }
 
@@ -2173,12 +2180,12 @@ set_input_mode :: proc {
 }
 
 @(private)
-set_input_mode_b32 :: proc(window: ^Window, mode: Input_Mode, value: b32) {
+set_input_mode_b32 :: proc "contextless" (window: ^Window, mode: Input_Mode, value: b32) {
     glfwSetInputMode(window, mode, cast(i32) value)
 }
 
 @(private)
-set_input_mode_cursor_mode :: proc(window: ^Window, mode: Input_Mode, value: Cursor_Mode) {
+set_input_mode_cursor_mode :: proc "contextless" (window: ^Window, mode: Input_Mode, value: Cursor_Mode) {
     glfwSetInputMode(window, mode, cast(i32) value)
 }
 
@@ -2203,7 +2210,7 @@ set_input_mode_cursor_mode :: proc(window: ^Window, mode: Input_Mode, value: Cur
     
     @(since=3.3)
 */
-raw_mouse_motion_supported :: proc() -> b32 {
+raw_mouse_motion_supported :: proc "contextless" () -> b32 {
     return glfwRawMouseMotionSupported()
 }
 
@@ -2268,7 +2275,7 @@ raw_mouse_motion_supported :: proc() -> b32 {
     @(thread_safety=safe)
     @(since=3.2)
 */
-get_key_name :: proc(key: Key, scancode: i32) -> cstring {
+get_key_name :: proc "contextless" (key: Key, scancode: i32) -> cstring {
     return glfwGetKeyName(key, scancode)
 }
 
@@ -2294,7 +2301,7 @@ get_key_name :: proc(key: Key, scancode: i32) -> cstring {
     @(thread_safety=safe)
     @(since=3.3)
 */
-get_key_scancode :: proc(key: Key) -> i32 {
+get_key_scancode :: proc "contextless" (key: Key) -> i32 {
     return glfwGetKeyScancode(key)
 }
 
@@ -2332,7 +2339,7 @@ get_key_scancode :: proc(key: Key) -> i32 {
     @(thread_safety=main_thread_only)
     @(since=3.0)
 */
-get_key :: proc(window: ^Window, key: Key) -> Action {
+get_key :: proc "contextless" (window: ^Window, key: Key) -> Action {
     return glfwGetKey(window, key)
 }
 
@@ -2360,7 +2367,7 @@ get_key :: proc(window: ^Window, key: Key) -> Action {
     @(thread_safety=main_thread_only)
     @(since=1.0)
 */
-get_mouse_button :: proc(window: ^Window, button: Mouse_Button) -> Action {
+get_mouse_button :: proc "contextless" (window: ^Window, button: Mouse_Button) -> Action {
     return glfwGetMouseButton(window, button)
 }
 
@@ -2391,7 +2398,7 @@ get_mouse_button :: proc(window: ^Window, button: Mouse_Button) -> Action {
     @(thread_safety=main_thread_only)
     @(since=3.0)
 */
-get_cursor_pos :: proc(window: ^Window) -> (f64, f64) {
+get_cursor_pos :: proc "contextless" (window: ^Window) -> (f64, f64) {
     pos_x: f64 = ---
     pos_y: f64 = ---
     glfwGetCursorPos(window, &pos_x, &pos_y)
@@ -2429,115 +2436,115 @@ get_cursor_pos :: proc(window: ^Window) -> (f64, f64) {
     @(thread_safety=main_thread_only)
     @(since=3.0)
 */
-set_cursor_pos :: proc(window: ^Window, pos_x: f64, pos_y: f64) {
+set_cursor_pos :: proc "contextless" (window: ^Window, pos_x: f64, pos_y: f64) {
     glfwSetCursorPos(window, pos_x, pos_y)
 }
 
 // Cursors.
 
-create_cursor :: proc(image: ^Image, x: i32, y: i32) -> ^Cursor {
+create_cursor :: proc "contextless" (image: ^Image, x: i32, y: i32) -> ^Cursor {
     return glfwCreateCursor(image, x, y)
 }
 
-create_standard_cursor :: proc(shape: Cursor_Shape) -> ^Cursor {
+create_standard_cursor :: proc "contextless" (shape: Cursor_Shape) -> ^Cursor {
     return glfwCreateStandardCursor(shape)
 }
 
-destroy_cursor :: proc(cursor: ^Cursor) {
+destroy_cursor :: proc "contextless" (cursor: ^Cursor) {
     glfwDestroyCursor(cursor)
 }
 
-set_cursor :: proc(window: ^Window, cursor: ^Cursor) {
+set_cursor :: proc "contextless" (window: ^Window, cursor: ^Cursor) {
     glfwSetCursor(window, cursor)
 }
 
 // More callbacks.
 
-set_key_callback :: proc(window: ^Window, callback: Key_Proc) -> Key_Proc {
+set_key_callback :: proc "contextless" (window: ^Window, callback: Key_Proc) -> Key_Proc {
     return glfwSetKeyCallback(window, callback)
 }
 
-set_char_callback :: proc(window: ^Window, callback: Char_Proc) -> Char_Proc {
+set_char_callback :: proc "contextless" (window: ^Window, callback: Char_Proc) -> Char_Proc {
     return glfwSetCharCallback(window, callback)
 }
 
-set_char_mods_callback :: proc(window: ^Window, callback: Char_Mods_Proc) -> Char_Mods_Proc {
+set_char_mods_callback :: proc "contextless" (window: ^Window, callback: Char_Mods_Proc) -> Char_Mods_Proc {
     return glfwSetCharModsCallback(window, callback)
 }
 
-set_mouse_button_callback :: proc(window: ^Window, callback: Mouse_Button_Proc) -> Mouse_Button_Proc {
+set_mouse_button_callback :: proc "contextless" (window: ^Window, callback: Mouse_Button_Proc) -> Mouse_Button_Proc {
     return glfwSetMouseButtonCallback(window, callback)
 }
 
-set_cursor_pos_callback :: proc(window: ^Window, callback: Cursor_Pos_Proc) -> Cursor_Pos_Proc {
+set_cursor_pos_callback :: proc "contextless" (window: ^Window, callback: Cursor_Pos_Proc) -> Cursor_Pos_Proc {
     return glfwSetCursorPosCallback(window, callback)
 }
 
-set_cursor_enter_callback :: proc(window: ^Window, callback: Cursor_Enter_Proc) -> Cursor_Enter_Proc {
+set_cursor_enter_callback :: proc "contextless" (window: ^Window, callback: Cursor_Enter_Proc) -> Cursor_Enter_Proc {
     return glfwSetCursorEnterCallback(window, callback)
 }
 
-set_scroll_callback :: proc(window: ^Window, callback: Scroll_Proc) -> Scroll_Proc {
+set_scroll_callback :: proc "contextless" (window: ^Window, callback: Scroll_Proc) -> Scroll_Proc {
     return glfwSetScrollCallback(window, callback)
 }
 
-set_drop_callback :: proc(window: ^Window, callback: Drop_Proc) -> Drop_Proc {
+set_drop_callback :: proc "contextless" (window: ^Window, callback: Drop_Proc) -> Drop_Proc {
     return glfwSetDropCallback(window, callback)
 }
 
 // Joystick input.
 
-joystick_present :: proc(jid: Joystick) -> b32 {
+joystick_present :: proc "contextless" (jid: Joystick) -> b32 {
     return glfwJoystickPresent(jid)
 }
 
-get_joystick_axes :: proc(jid: Joystick) -> []f32 {
+get_joystick_axes :: proc "contextless" (jid: Joystick) -> []f32 {
     count: i32 = ---
     axes := glfwGetJoystickAxes(jid, &count)
     return axes[:count]
 }
 
-get_joystick_buttons :: proc(jid: Joystick) -> []Joystick_Button_State {
+get_joystick_buttons :: proc "contextless" (jid: Joystick) -> []Joystick_Button_State {
     count: i32 = ---
     buttons := glfwGetJoystickButtons(jid, &count)
     return buttons[:count]
 }
 
-get_joystick_hats :: proc(jid: Joystick) -> []Hat_State {
+get_joystick_hats :: proc "contextless" (jid: Joystick) -> []Hat_State {
     count: i32 = ---
     hats := glfwGetJoystickHats(jid, &count)
     return hats[:count]
 }
 
-get_joystick_name :: proc(jid: Joystick) -> cstring {
+get_joystick_name :: proc "contextless" (jid: Joystick) -> cstring {
     return glfwGetJoystickName(jid)
 }
 
-get_joystick_guid :: proc(jid: Joystick) -> cstring {
+get_joystick_guid :: proc "contextless" (jid: Joystick) -> cstring {
     return glfwGetJoystickGUID(jid)
 }
 
-set_joystick_user_pointer :: proc(jid: Joystick, pointer: rawptr) {
+set_joystick_user_pointer :: proc "contextless" (jid: Joystick, pointer: rawptr) {
     glfwSetJoystickUserPointer(jid, pointer)
 }
 
-get_joystick_user_pointer :: proc(jid: Joystick) -> rawptr {
+get_joystick_user_pointer :: proc "contextless" (jid: Joystick) -> rawptr {
     return glfwGetJoystickUserPointer(jid)
 }
 
-joystick_is_gamepad :: proc(jid: Joystick) -> b32 {
+joystick_is_gamepad :: proc "contextless" (jid: Joystick) -> b32 {
     return glfwJoystickIsGamepad(jid)
 }
 
-set_joystick_callback :: proc(callback: Joystick_Proc) -> Joystick_Proc {
+set_joystick_callback :: proc "contextless" (callback: Joystick_Proc) -> Joystick_Proc {
     return glfwSetJoystickCallback(callback)
 }
 
-update_gamepad_mappings :: proc(mappings: cstring) -> b32 {
+update_gamepad_mappings :: proc "contextless" (mappings: cstring) -> b32 {
     return glfwUpdateGamepadMappings(mappings)
 }
 
-get_gamepad_state :: proc(jid: Joystick, state: ^Gamepad_State) -> (b32, Error) {
+get_gamepad_state :: proc "contextless" (jid: Joystick, state: ^Gamepad_State) -> (b32, Error) {
     res := glfwGetGamepadState(jid, state)
     if res <= 1 {
         return cast(b32) res, .No_Error
@@ -2547,75 +2554,75 @@ get_gamepad_state :: proc(jid: Joystick, state: ^Gamepad_State) -> (b32, Error) 
 
 // Clipboard.
 
-set_clipboard_string :: proc(window: ^Window, string: cstring) {
+set_clipboard_string :: proc "contextless" (window: ^Window, string: cstring) {
     glfwSetClipboardString(window, string)
 }
 
-get_clipboard_string :: proc(window: ^Window) -> cstring {
+get_clipboard_string :: proc "contextless" (window: ^Window) -> cstring {
     return glfwGetClipboardString(window)
 }
 
 // Time.
 
-get_time :: proc() -> f64 {
+get_time :: proc "contextless" () -> f64 {
     return glfwGetTime()
 }
 
-set_time :: proc(time: f64) {
+set_time :: proc "contextless" (time: f64) {
     glfwSetTime(time)
 }
 
-get_timer_value :: proc() -> u64 {
+get_timer_value :: proc "contextless" () -> u64 {
     return glfwGetTimerValue()
 }
 
-get_timer_frequency :: proc() -> u64 {
+get_timer_frequency :: proc "contextless" () -> u64 {
     return glfwGetTimerFrequency()
 }
 
 // Context.
 
-make_context_current :: proc(window: ^Window) {
+make_context_current :: proc "contextless" (window: ^Window) {
     glfwMakeContextCurrent(window)
 }
 
-get_context_current :: proc() -> ^Window {
+get_context_current :: proc "contextless" () -> ^Window {
     return glfwGetCurrentContext()
 }
 
-swap_buffers :: proc(window: ^Window) {
+swap_buffers :: proc "contextless" (window: ^Window) {
     glfwSwapBuffers(window)
 }
 
-swap_interval :: proc(interval: i32) {
+swap_interval :: proc "contextless" (interval: i32) {
     glfwSwapInterval(interval)
 }
 
-extension_supported :: proc(extension: cstring) -> b32 {
+extension_supported :: proc "contextless" (extension: cstring) -> b32 {
     return glfwExtensionSupported(extension)
 }
 
-get_proc_address :: proc(name: cstring) -> GL_Proc {
+get_proc_address :: proc "contextless" (name: cstring) -> GL_Proc {
     return glfwGetProcAddress(name)
 }
 
 // Vulkan.
 
-vulkan_supported :: proc() -> b32 {
+vulkan_supported :: proc "contextless" () -> b32 {
     return glfwVulkanSupported()
 }
 
-get_required_instance_extensions :: proc() -> []cstring {
+get_required_instance_extensions :: proc "contextless" () -> []cstring {
     count: i32 = ---
     exts := glfwGetRequiredInstanceExtensions(&count)
     return exts[:count]
 }
 
-get_instance_proc_address :: proc(instance: VkInstance, name: cstring) -> VK_Proc {
+get_instance_proc_address :: proc "contextless" (instance: VkInstance, name: cstring) -> VK_Proc {
     return glfwGetInstanceProcAddress(instance, name)
 }
 
-get_physical_device_presentation_support :: proc(
+get_physical_device_presentation_support :: proc "contextless" (
     instance:     VkInstance,
     device:       VkPhysicalDevice,
     queue_family: u32,
